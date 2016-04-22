@@ -30,3 +30,13 @@ proguard/
 
 # Android Studio captures folder
 captures/
+
+# vim
+*.swp
+
+# C++
+*.o
+
+# CMake
+build/
+CMakeFiles/

@@ -28,12 +28,6 @@
 namespace base {
 
 bool PathExists(const FilePath& path) {
-  ThreadRestrictions::AssertIOAllowed();
-#if defined(OS_ANDROID)
-  if (path.IsContentUri()) {
-    return ContentUriExists(path);
-  }
-#endif
   return access(path.value().c_str(), F_OK) == 0;
 }
 
@@ -70,4 +64,5 @@ bool WriteFileDescriptor(const int fd, const char* data, int size) {
 
   return true;
 }
+
 }  // namespace base

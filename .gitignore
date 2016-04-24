@@ -38,5 +38,8 @@ captures/
 *.o
 
 # CMake
-build/
+out/
 CMakeFiles/
+
+# My scripts
+make.sh

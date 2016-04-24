@@ -106,6 +106,9 @@
 #include <errno.h>
 #include <vector>
 
+// ducalpha: use safe_strerror_r
+#include "base/posix/safe_strerror.h"
+
 // Log severity level constants.
 const int FATAL   = -3;
 const int ERROR   = -2;
@@ -301,7 +304,7 @@ class ErrnoMessageLogger {
   std::string SystemErrorCodeToString(SystemErrorCode error_code) {
     const int buffer_size = 256;
     char buf[buffer_size];
-    strerror_r(err_, buf, sizeof(buf));
+    base::safe_strerror_r(err_, buf, sizeof(buf));
     return std::string(buf);
   }
 

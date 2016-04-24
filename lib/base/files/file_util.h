@@ -8,6 +8,10 @@
 #ifndef BASE_FILES_FILE_UTIL_H_
 #define BASE_FILES_FILE_UTIL_H_
 
+#include "base/base_export.h"
+#include "base/files/file_path.h"
+#include "build/build_config.h"
+
 namespace base {
 // Returns true if the given path exists on the local filesystem,
 // false otherwise.

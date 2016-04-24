@@ -8,9 +8,9 @@
 
 #include <fstream>
 #include <limits>
+#include <memory>
 
 #include "base/logging.h"
-#include "base/strings/string_util.h"
 
 namespace base {
 bool ReadFileToString(const FilePath& path, std::string* contents) {
@@ -23,8 +23,8 @@ bool ReadFileToStringWithMaxSize(const FilePath& path,
                                  size_t max_size) {
   if (contents)
     contents->clear();
-  if (path.ReferencesParent())
-    return false;
+  // TODO: add this 
+  // if (path.ReferencesParent()) return false;
   FILE* file = OpenFile(path, "rb");
   if (!file) {
     return false;

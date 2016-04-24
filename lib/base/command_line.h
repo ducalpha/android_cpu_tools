@@ -26,6 +26,8 @@ namespace base {
 
 class CommandLine {
  public:
+  typedef std::string StringType;
+
   // Initialize from an argv vector (or directly from main()'s argv).
   CommandLine(int argc, const char* const* argv);
   explicit CommandLine(const std::vector<std::string>& argv);
@@ -89,10 +91,18 @@ class CommandLine {
   static bool IsSwitch(const std::string& parameter_string,
                        std::string* switch_string,
                        std::string* switch_value);
+  // Allow the copy constructor. A common pattern is to copy of the current
+  // process's command line and then add some flags to it. For example:
+  //   CommandLine cl(*CommandLine::ForCurrentProcess());
+  //   cl.AppendSwitch(...);
 
   // Internal version of GetCommandLineString. If |quote_placeholders| is true,
   // also quotes parts with '%' in them.
   StringType GetCommandLineStringInternal() const;
+
+  // Internal version of GetArgumentsString. If |quote_placeholders| is true,
+  // also quotes parts with '%' in them.
+  StringType GetArgumentsStringInternal() const;
 
   DISALLOW_COPY_AND_ASSIGN(CommandLine);
 };

@@ -2,13 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include <base/command_line.h>
+#include "base/command_line.h"
 
-#include <algorithm>
+// #include <algorithm>
 
 #include "base/logging.h"
-//#include <base/string_util.h>
-#include "base/file_path.h"
+#include "base/files/file_path.h"
 
 namespace {
 
@@ -144,7 +143,7 @@ CommandLine::StringType CommandLine::GetCommandLineStringInternal() const {
   return string;
 }
 
-CommandLine::StringType CommandLine::GetArgumentsStringInternal() {
+CommandLine::StringType CommandLine::GetArgumentsStringInternal() const {
   StringType params;
   // Append switches and arguments.
   bool parse_switches = true;

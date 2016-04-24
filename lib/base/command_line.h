@@ -64,6 +64,13 @@ class CommandLine {
   // Append a loose value to the command line.
   void AppendLooseValue(const std::string& value);
 
+  // Constructs and returns the represented command line string.
+  // CAUTION! This should be avoided on POSIX because quoting behavior is
+  // unclear.
+  StringType GetCommandLineString() const {
+    return GetCommandLineStringInternal();
+  }
+
  private:
   // The argv array, with the program name in argv_[0].
   std::vector<std::string> argv_;
@@ -82,6 +89,10 @@ class CommandLine {
   static bool IsSwitch(const std::string& parameter_string,
                        std::string* switch_string,
                        std::string* switch_value);
+
+  // Internal version of GetCommandLineString. If |quote_placeholders| is true,
+  // also quotes parts with '%' in them.
+  StringType GetCommandLineStringInternal() const;
 
   DISALLOW_COPY_AND_ASSIGN(CommandLine);
 };

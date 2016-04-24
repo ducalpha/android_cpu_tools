@@ -3,7 +3,6 @@
 #include <cstdio>
 #include <vector>
 
-int workload_length;
 
 int main(int argc, char **argv)
 {
@@ -16,7 +15,7 @@ int main(int argc, char **argv)
   int cpu_affinity = atoi(argv[1]);
   fprintf(stderr, "Set affinity to cpu %d\n", cpu_affinity);
 
-  workload_length = atoi(argv[2]);
+  int workload_length = std::stoi(argv[2]);
 
   browser_profiler::WorkloadGenerator::RunWorkload(
                         std::vector<int>(1, cpu_affinity), workload_length);

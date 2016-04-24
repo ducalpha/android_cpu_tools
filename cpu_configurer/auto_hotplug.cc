@@ -1,10 +1,9 @@
 // Copyright 2016 Duc Hoang Bui, KAIST. All rights reserved.
 // Licensed under MIT ($DUC_LICENSE_URL)
 
-#include <memory>
+#include "cpu_configurer/auto_hotplug.h"
 
 #include "base/file_util.h"
-#include "cpu_configurer/auto_hotplug.h"
 
 namespace {
 
@@ -15,32 +14,38 @@ const char[] kEnabledDmHotplugPath = "/sys/power/enable_dm_hotplug";
 
 namespace android_tools {
 
-std::unique_ptr<AutoHotplug> AutoHotplug::Create(Type type) {
-  switch (type) {
-    case AutoHotplugMechanism::MPDECISION:
-      return std::unique_ptr<AutoHotplug>(new Mpdecision());
-      break;
-    case AutoHotplugMechanism::DM_HOTPLUG:
-      return std::unique_ptr<AutoHotplug>(new DmHotplug());
-      break;
-    default:
-      LOG(ERROR) << "Unknown type " << type;
+// static
+std::unique_ptr<AutoHotplug> AutoHotplug::Create(std::string type) {
+  auto creation_type = creation_map.find(type);
+  if (creation_type != creation_map.end()) {
+    return (*create_type->second)();
+  } else {
+    std::string supported_types;
+    for (const auto& m : creation_map_) {
+      supported_types.append(m.first + " ");
+    }
+    LOG(ERROR) << "Auto hotplug type is not recognized (supported types: " 
+        << supported_types << "\n; auto detect and create";
+    return AutoDetectCreate();
   }
   return nullptr;
 }
 
-std::unique_ptr<AutoHotplug> AutoHotplug::CreateAutoDetect() {
-  return Create(AutoDetect());
-}
-
-Type AutoHotplug::AutoDetect() {
+// static
+std::unique_ptr<AutoHotplug> AutoHotplug::AutoDetectCreate() {
   if (FileUtil::PathExists(kMpdecisionPath)) {
-    return Type::MPDECISION;
+    return creation_map["mpdecision"]();
   } else if (FileUtil::PathExists(kEnabledDmHotplugPath)) {
-    return Type::DM_HOTPLUG;
+    return creation_map["dm-hotplug"]();
+  } else {
+    LOG(ERROR) << "Cannot detect the auto hotplug mechanism";
   }
 
-  return Type::UNKNOWN;
+  return nullptr;
+}
+
+// static
+std::vector<std::string> AutoHotplug::SupportedTypes() {
 }
 
 void Mpdecision::SetEnabled(bool enabled) {

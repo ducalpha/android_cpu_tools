@@ -6,8 +6,9 @@
 
 #include <algorithm>
 
-#include <base/logging.h>
+#include "base/logging.h"
 //#include <base/string_util.h>
+#include "base/file_path.h"
 
 namespace {
 
@@ -131,6 +132,39 @@ void CommandLine::AppendSwitchWithValue(const std::string& switch_string,
 
 void CommandLine::AppendLooseValue(const std::string& value) {
   argv_.push_back(value);
+}
+
+CommandLine::StringType CommandLine::GetCommandLineStringInternal() const {
+  StringType string(argv_[0]);
+  StringType params(GetArgumentsStringInternal());
+  if (!params.empty()) {
+    string.append(StringType(FILE_PATH_LITERAL(" ")));
+    string.append(params);
+  }
+  return string;
+}
+
+CommandLine::StringType CommandLine::GetArgumentsStringInternal() {
+  StringType params;
+  // Append switches and arguments.
+  bool parse_switches = true;
+  for (size_t i = 1; i < argv_.size(); ++i) {
+    StringType arg = argv_[i];
+    StringType switch_string;
+    StringType switch_value;
+    parse_switches &= arg != kSwitchTerminator;
+    if (i > 1)
+      params.append(StringType(FILE_PATH_LITERAL(" ")));
+    if (parse_switches && IsSwitch(arg, &switch_string, &switch_value)) {
+      params.append(switch_string);
+      if (!switch_value.empty()) {
+        params.append(kSwitchValueSeparator + switch_value);
+      }
+    } else {
+      params.append(arg);
+    }
+  }
+  return params;
 }
 
 }  // namespace base

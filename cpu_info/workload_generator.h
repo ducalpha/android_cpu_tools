@@ -1,6 +1,4 @@
 // Copyright 2016 Duc Hoang Bui, KAIST. All rights reserved.
-// Licensed under MIT ($DUC_LICENSE_URL)
-
 
 #ifndef BROWSER_PROFILER_WORKLOAD_GENERATOR_H_
 #define BROWSER_PROFILER_WORKLOAD_GENERATOR_H_

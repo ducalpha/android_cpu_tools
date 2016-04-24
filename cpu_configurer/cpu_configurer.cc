@@ -37,18 +37,20 @@ void CpuConfigurer::SetMaxCoreId(int max_core_id) {
   num_online_cores_ = max_core_id_ + 1;
 }
 
-void CpuConfigurer::SetAutoHotplug(AutoHotplug::Type type) {
-  if (type == AutoHotplug::Type::UNKNOWN) {
-    LOG(INFO) << "User does not know the auto hotplug mechanism, auto detect it";
-    auto_hotplug_ = AutoHotplug::CreateAutoDetect();
-  } else {
-    auto_hotplug_ = AutoHotplug::Create(type)
-  }
+void CpuConfigurer::SetAutoHotplug(const std::string& type) {
+  auto_hotplug_ = AutoHotplug::Create(type)
   if (auto_hotplug_ == nullptr)
     LOG(ERROR) << "Cannot create auto hotplug";
 }
 
+void CpuConfigurer::SetAutoHotplug() {
+  SetAutoHotplug("");
+}
+
 void CpuConfigurer::SetAutoHotplugEnabled(bool enabled) {
+  if (auto_hotplug_ == nullptr)
+    SetAutoHotplug();
+
   if (auto_hotplug_ != nullptr)
     auto_hotplug_->SetEnabled(enabled);
 }

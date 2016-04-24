@@ -34,20 +34,6 @@ namespace switches {
     // Turn on/off values
     const char kOn[] = "on";
     const char kOff[] = "off";
-
-    // Values for auto-hotplug
-    const char kMpdecision[] = "mpdecision";
-    const char kDmHotplug[] = "dm-hotplug";
-  }
-}
-
-android_tools::AutoHotplug::Type AutoHotplug(std::string auto_hotplug_option) {
-  if (auto_hotplug_option == switches::values::kMpdecision) {
-    return android_tools::AutoHotplug::Type::MPDECISON;
-  } else if (auto_hotplug_option == switches::values::kDmHotplug) {
-    return android_tools::AutoHotplug::Type::DM_HOTPLUG;
-  } else {
-    return android_tools::AutoHotplug::Type::UNKNOWN;
   }
 }
 
@@ -79,7 +65,7 @@ int main(int argc, char **argv) {
   // TODO: auto detect cpu management daemon and auto hotplug mechanism
   std::string auto_hotplug_option = cmdline.GetSwitchValue(switches::kAutoHotplug);
 
-  cpu_configurer.SetAutoHotplug(AutoHotplug(auto_hotplug_option));
+  cpu_configurer.SetAutoHotplug(auto_hotplug_option);
 
   std::string set_auto_hotplug_option = cmdline.GetSwitchValue(switches::kSetAutoHotplug);
   // Always disable auto hotplug first

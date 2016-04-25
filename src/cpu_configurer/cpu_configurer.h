@@ -16,25 +16,24 @@ class CpuConfigurer {
  public:
   void SetMaxCoreId(size_t max_core_id);
 
-  void SetAutoHotplug(std::string type);
+  void SetAutoHotplugType(const std::string& type);
   void SetAutoHotplugEnabled(bool enabled);
 
   // Enable num_cores, disable the remaining
   void SetNumOnlineCores(size_t num_cores);
 
-  void SetGovernorForOnlineCores(std::string governor);
+  void SetGovernorForOnlineCores(const std::string& governor);
 
   /* if we know num online core, we can avoid opening offline core's sysfs file */
-  void SetMaxFreqForOnlineCores(std::string freq_khz);
-  void SetMinFreqForOnlineCores(std::string freq_khz);
+  void SetMaxFreqForOnlineCores(const std::string& freq_khz);
+  void SetMinFreqForOnlineCores(const std::string& freq_khz);
 
  private:
   void SetCoreEnabled(size_t core_id, bool enabled);
-  void SetGovernorForCore(std::string governor, size_t core_id);
 
-  void SetMaxFreqForCore(std::string freq_khz, std::string core_id);
-  void SetMinFreqForCore(std::string freq_khz, std::string core_id);
-  void SetGovernorForCore(std::string governor, std::string core_id);
+  void SetGovernorForCore(const std::string& governor, size_t core_id);
+  void SetMaxFreqForCore(const std::string& freq_khz, size_t core_id);
+  void SetMinFreqForCore(const std::string& freq_khz, size_t core_id);
 
   size_t max_core_id_ = 7; // max num cores in modern SoC is 8
   size_t num_online_cores_ = max_core_id_ + 1;

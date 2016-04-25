@@ -3,13 +3,25 @@
 
 #include "cpu_configurer/auto_hotplug.h"
 
+#include <string>
+#include <vector>
+
+#include "base/command_line.h"
 #include "base/logging.h"
+#include "base/files/file_path.h"
 #include "base/files/file_util.h"
+#include "base/process/launch.h"
+
 
 namespace {
 
-const char kMpdecisionPath[] = "/system/bin/mpdecision";
-const char kEnabledDmHotplugPath[] = "/sys/power/enable_dm_hotplug";
+const std::string kMpdecisionPath = "/system/bin/mpdecision";
+const std::string kEnabledDmHotplugPath = "/sys/power/enable_dm_hotplug";
+
+std::map<std::string, std::function<std::unique_ptr<android_tools::AutoHotplug>()>> creation_map{
+  { "mpdecision", []() { return std::unique_ptr<android_tools::AutoHotplug>(new android_tools::Mpdecision()); } },
+  { "dm-hotplug", []() { return std::unique_ptr<android_tools::AutoHotplug>(new android_tools::DmHotplug()); } },
+};
 
 }  // namespace
 
@@ -17,12 +29,12 @@ namespace android_tools {
 
 // static
 std::unique_ptr<AutoHotplug> AutoHotplug::Create(std::string type) {
-  auto creation_type = creation_map_.find(type);
-  if (creation_type != creation_map_.end()) {
+  auto creation_type = creation_map.find(type);
+  if (creation_type != creation_map.end()) {
     return (creation_type->second)();
   } else {
     std::string supported_types;
-    for (const auto& m : creation_map_) {
+    for (const auto& m : creation_map) {
       supported_types.append(m.first + " ");
     }
     LOG(ERROR) << "Auto hotplug type is not recognized (supported types: " 
@@ -34,10 +46,10 @@ std::unique_ptr<AutoHotplug> AutoHotplug::Create(std::string type) {
 
 // static
 std::unique_ptr<AutoHotplug> AutoHotplug::AutoDetectCreate() {
-  if (base::PathExists(kMpdecisionPath)) {
-    return creation_map_["mpdecision"]();
-  } else if (base::PathExists(kEnabledDmHotplugPath)) {
-    return creation_map_["dm-hotplug"]();
+  if (base::PathExists(base::FilePath(kMpdecisionPath))) {
+    return creation_map["mpdecision"]();
+  } else if (base::PathExists(base::FilePath(kEnabledDmHotplugPath))) {
+    return creation_map["dm-hotplug"]();
   } else {
     LOG(ERROR) << "Cannot detect the auto hotplug mechanism";
   }
@@ -50,15 +62,29 @@ std::vector<std::string> AutoHotplug::SupportedTypes() {
 }
 
 void Mpdecision::SetEnabled(bool enabled) {
-  std::string cmd = "su -c ";
-  cmd += enabled ? "start" : "stop";
-  cmd += " mpdecision";
-  std::system(cmd.c_str());
+  std::vector<std::string> cmd_argv{"su", "-c"};
+  cmd_argv.emplace_back(enabled ? "start" : "stop");
+  cmd_argv.emplace_back("mpdecision");
+  base::CommandLine cmd(cmd_argv);
+  base::Process process = base::LaunchProcess(cmd, base::LaunchOptions());
+  if (!process.IsValid()) {
+    LOG(ERROR) << "Cannot run cmd " << cmd.GetCommandLineString();
+    return;
+  }
+
+  int exit_code;
+  if (!process.WaitForExit(&exit_code)) {
+    LOG(ERROR) << "Cannot get return code for cmd " << cmd.GetCommandLineString();
+    return;
+  }
+  if (exit_code != 0)
+    LOG(ERROR) << "Running " << cmd.GetCommandLineString() << " failed with code " << exit_code;
+
   // to save time, skip checking mpdecision processes
 }
 
 void DmHotplug::SetEnabled(bool enabled) {
-  base::WriteFile("/sys/power/enable_dm_hotplug", enabled ? "1" : "0", 1);
+  base::WriteFile(base::FilePath("/sys/power/enable_dm_hotplug"), enabled ? "1" : "0", 1);
 }
 
 }  // namespace android_tools

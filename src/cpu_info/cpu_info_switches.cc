@@ -1,21 +1,21 @@
 // Copyright 2016 Duc Hoang Bui, KAIST. All rights reserved.
 // Licensed under MIT ($DUC_LICENSE_URL)
 
-#ifndef ANDROID_TOOLS_CPU_INFO_SWITCHES_H_
-#define ANDROID_TOOLS_CPU_INFO_SWITCHES_H_
+#include "cpu_info/cpu_info_switches.h"
 
 namespace android_tools {
 namespace cpu_info {
 namespace switches {
 
-extern const char kCpuClusterInfo[];
+const char kCpuCoreIds[] = "cpu-core-ids";
 
-extern const char kCpuGovernor[];
+const char kClusterCoreIds[] = "cluster-core-ids";
 
-extern const char kCpuCoreIds[];
+const char kClusterFreqs[] = "cluster-freqs";
+
+const char kClusterFreqGovernors[] = "cluster-freq-governors";
+
 
 }  // namespace android_tools
 }  // namespace cpu_info
 }  // namespace switches
-
-#endif // ANDROID_TOOLS_CPU_INFO_SWITCHES_H_

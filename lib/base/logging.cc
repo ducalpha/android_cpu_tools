@@ -58,8 +58,8 @@ typedef pthread_mutex_t* MutexHandle;
 #include "base/base_switches.h"
 #include "base/command_line.h"
 #include "base/debug/alias.h"
-#include "base/debug/stack_trace.h"
 // ducalpha: remove dependency on debug
+//#include "base/debug/stack_trace.h"
 //#include "base/debug/debugger.h"
 #include "base/posix/eintr_wrapper.h"
 #include "base/strings/string_piece.h"
@@ -670,7 +670,9 @@ LogMessage::~LogMessage() {
         priority = ANDROID_LOG_FATAL;
         break;
     }
-    __android_log_write(priority, "chromium", str_newline.c_str());
+    // __android_log_write(priority, "chromium", str_newline.c_str());
+    // ducalpha: use "native" tag to distinguish with the Chromium
+    __android_log_write(priority, "native", str_newline.c_str());
 #endif
     ignore_result(fwrite(str_newline.data(), str_newline.size(), 1, stderr));
     fflush(stderr);

@@ -233,6 +233,8 @@ Time Time::UnixEpoch() {
   return time;
 }
 
+// ducalpha: remove dependency on lazy_instance
+/*
 Time Time::LocalMidnight() const {
   Exploded exploded;
   LocalExplode(&exploded);
@@ -241,7 +243,7 @@ Time Time::LocalMidnight() const {
   exploded.second = 0;
   exploded.millisecond = 0;
   return FromLocalExploded(exploded);
-}
+}*/
 
 // static
 bool Time::FromStringInternal(const char* time_string,

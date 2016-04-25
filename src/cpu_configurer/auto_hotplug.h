@@ -21,12 +21,6 @@ class AutoHotplug {
   // Detect the auto hotplug mechanism
   static std::unique_ptr<AutoHotplug> AutoDetectCreate();
 
- private:
-  static std::map<std::string, std::function<std::unique_ptr<AutoHotplug>()>> creation_map_;
-  /*{
-    { "mpdecision", []() { return std::unique_ptr<AutoHotplug>(new Mpdecision()); } },
-    { "dm-hotplug", []() { return std::unique_ptr<AutoHotplug>(new DmHotplug()); } },
-  };*/
 };
 
 class Mpdecision : public AutoHotplug {

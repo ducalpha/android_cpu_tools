@@ -5,7 +5,6 @@ if [[ $# -ge 1 ]]; then
   echo "Using android ndk path:"$ANDROID_NDK_PATH
 fi
 
-# rm -r out
 mkdir out
 cd out
 
@@ -17,4 +16,4 @@ CMAKE_CMD="cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/android-cmake/android.toolchain
 echo $CMAKE_CMD
 eval $CMAKE_CMD
 
-make #VERBOSE=1
+make  VERBOSE=1

@@ -513,6 +513,8 @@ class BASE_EXPORT Time : public time_internal::TimeBase<Time> {
   static bool IsHighResolutionTimerInUse();
 #endif
 
+  // ducalpha: remove dependency on lazy_instance
+  /*
   // Converts an exploded structure representing either the local time or UTC
   // into a Time class.
   static Time FromUTCExploded(const Exploded& exploded) {
@@ -520,7 +522,7 @@ class BASE_EXPORT Time : public time_internal::TimeBase<Time> {
   }
   static Time FromLocalExploded(const Exploded& exploded) {
     return FromExploded(true, exploded);
-  }
+  }*/
 
   // Converts a string representation of time to a Time object.
   // An example of a time string which is converted is as below:-
@@ -546,9 +548,11 @@ class BASE_EXPORT Time : public time_internal::TimeBase<Time> {
     return Explode(true, exploded);
   }
 
+  // ducalpha: remove dependency on lazy_instance
+  /*
   // Rounds this time down to the nearest day in local time. It will represent
   // midnight on that day.
-  Time LocalMidnight() const;
+  Time LocalMidnight() const;*/
 
  private:
   friend class time_internal::TimeBase<Time>;
@@ -559,9 +563,11 @@ class BASE_EXPORT Time : public time_internal::TimeBase<Time> {
   // |is_local = false|.
   void Explode(bool is_local, Exploded* exploded) const;
 
+  // ducalpha: remove dependency on lazy_instance
+  /*
   // Unexplodes a given time assuming the source is either local time
   // |is_local = true| or UTC |is_local = false|.
-  static Time FromExploded(bool is_local, const Exploded& exploded);
+  static Time FromExploded(bool is_local, const Exploded& exploded);*/
 
   // Converts a string representation of time to a Time object.
   // An example of a time string which is converted is as below:-

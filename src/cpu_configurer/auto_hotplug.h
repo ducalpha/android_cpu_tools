@@ -22,17 +22,20 @@ class AutoHotplug {
   static std::unique_ptr<AutoHotplug> AutoDetectCreate();
 
  private:
-  std::map<std::string, std::function<std::unique_ptr<AutoHotplug>()>> creation_map_{
+  static std::map<std::string, std::function<std::unique_ptr<AutoHotplug>()>> creation_map_;
+  /*{
     { "mpdecision", []() { return std::unique_ptr<AutoHotplug>(new Mpdecision()); } },
     { "dm-hotplug", []() { return std::unique_ptr<AutoHotplug>(new DmHotplug()); } },
-  };
+  };*/
 };
 
-class Mpdecision : public AutoHotplugMechanism {
+class Mpdecision : public AutoHotplug {
+ public:
   virtual void SetEnabled(bool enabled) override;
 };
 
-class DmHotplug : public AutoHotplugMechanism {
+class DmHotplug : public AutoHotplug {
+ public:
   virtual void SetEnabled(bool enabled) override;
 };
 

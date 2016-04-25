@@ -3,12 +3,13 @@
 
 #include "cpu_configurer/auto_hotplug.h"
 
-#include "base/file_util.h"
+#include "base/logging.h"
+#include "base/files/file_util.h"
 
 namespace {
 
-const char[] kMpdecisionPath = "/system/bin/mpdecision";
-const char[] kEnabledDmHotplugPath = "/sys/power/enable_dm_hotplug";
+const char kMpdecisionPath[] = "/system/bin/mpdecision";
+const char kEnabledDmHotplugPath[] = "/sys/power/enable_dm_hotplug";
 
 }  // namespace
 
@@ -16,9 +17,9 @@ namespace android_tools {
 
 // static
 std::unique_ptr<AutoHotplug> AutoHotplug::Create(std::string type) {
-  auto creation_type = creation_map.find(type);
-  if (creation_type != creation_map.end()) {
-    return (*create_type->second)();
+  auto creation_type = creation_map_.find(type);
+  if (creation_type != creation_map_.end()) {
+    return (creation_type->second)();
   } else {
     std::string supported_types;
     for (const auto& m : creation_map_) {
@@ -33,10 +34,10 @@ std::unique_ptr<AutoHotplug> AutoHotplug::Create(std::string type) {
 
 // static
 std::unique_ptr<AutoHotplug> AutoHotplug::AutoDetectCreate() {
-  if (FileUtil::PathExists(kMpdecisionPath)) {
-    return creation_map["mpdecision"]();
-  } else if (FileUtil::PathExists(kEnabledDmHotplugPath)) {
-    return creation_map["dm-hotplug"]();
+  if (base::PathExists(kMpdecisionPath)) {
+    return creation_map_["mpdecision"]();
+  } else if (base::PathExists(kEnabledDmHotplugPath)) {
+    return creation_map_["dm-hotplug"]();
   } else {
     LOG(ERROR) << "Cannot detect the auto hotplug mechanism";
   }
@@ -49,15 +50,15 @@ std::vector<std::string> AutoHotplug::SupportedTypes() {
 }
 
 void Mpdecision::SetEnabled(bool enabled) {
-  std::std::string cmd = "su -c ";
+  std::string cmd = "su -c ";
   cmd += enabled ? "start" : "stop";
   cmd += " mpdecision";
   std::system(cmd.c_str());
   // to save time, skip checking mpdecision processes
 }
 
-void DmHotplug:SetEnabled(bool enabled) {
-  WriteString("/sys/power/enable_dm_hotplug", enabled ? "1" : "0");
+void DmHotplug::SetEnabled(bool enabled) {
+  base::WriteFile("/sys/power/enable_dm_hotplug", enabled ? "1" : "0", 1);
 }
 
 }  // namespace android_tools

@@ -8,9 +8,11 @@
 #define _GNU_SOURCE
 #endif
 
-#include <sched.h>
-#include <unistd.h>
 #include <asm/unistd.h>
+#include <sched.h>
+#include <set>
+#include <string>
+#include <unistd.h>
 #include <sys/syscall.h>
 
 // Before android-21, ndk not have sched_setaffinity, CPU_ZERO and CPU_SET
@@ -55,16 +57,16 @@ int sched_setaffinity(pid_t pid, size_t cpusetsize, const cpu_set_t *mask) {
 
 #endif // !defined(CPU_ZERO)
 
-
 namespace base {
 
-void PlatformThread::SetCurrentThreadAffinity(const std::vector<int>& eligible_core_ids) {
-  SetThreadAffinity(0, eligible_core_ids);
+void PlatformThread::SetCurrentThreadAffinity(const std::vector<size_t>& eligible_core_ids) {
+  if (!SetThreadAffinity(0, eligible_core_ids)) {
+    LOG(ERROR) << "Set current thread affinity failed";
+  }
 }
 
-void PlatformThread::SetThreadAffinity(PlatformThreadId tid,
-                                       const std::vector<int>& eligible_core_ids) {
-  // tid is a kernel tid, can use gettid() to get the id in userspace
+bool PlatformThread::SetThreadAffinity(PlatformThreadId tid,
+                                       const std::vector<size_t>& eligible_core_ids) {
   cpu_set_t mask;
   CPU_ZERO(&mask);
 
@@ -75,7 +77,9 @@ void PlatformThread::SetThreadAffinity(PlatformThreadId tid,
   // There is no pthread_setaffinity_np in ndk yet
   if (sched_setaffinity(tid, sizeof(mask), &mask) < 0) {
       PLOG(ERROR) << "sched_setaffinity failed";
+      return false;
   }
+  return true;
 }
 
 }  // namespace base

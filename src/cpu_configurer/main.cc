@@ -1,10 +1,15 @@
 // Copyright 2016 Duc Hoang Bui, KAIST. All rights reserved.
 // Licensed under MIT ($DUC_LICENSE_URL)
 
+
+#include <cstdlib>
 #include <string>
 
-#include "cpu_configurer.h"
-#include "base/cmdline.h"
+#include "cpu_configurer/cpu_configurer.h"
+
+#include "base/command_line.h"
+#include "base/logging.h"
+
 
 namespace switches {
   // Set auto hotplug if the user knows, if not need to auto detect
@@ -53,11 +58,11 @@ const int kMaxNumCores = 8;
 //    Set min frequency for each core
 //    Enable auto-hotplug if needed
 int main(int argc, char **argv) {
-  base::CommandLine cmdline = base::CommandLine(argc, argv);
+  base::CommandLine cmdline(argc, argv);
   android_tools::CpuConfigurer cpu_configurer;
 
   if (cmdline.HasSwitch(switches::kMaxCoreId)) {
-    size_t max_core_id = std::stoul(cmdline.GetSwitchValue(switches::kMaxCoreId));
+    size_t max_core_id = std::atoi(cmdline.GetSwitchValue(switches::kMaxCoreId));
     cpu_configurer.SetMaxCoreId(max_core_id);
   }
 
@@ -70,8 +75,8 @@ int main(int argc, char **argv) {
   std::string set_auto_hotplug_option = cmdline.GetSwitchValue(switches::kSetAutoHotplug);
   // Always disable auto hotplug first
   // TODO: unify mpdecision and dm-hotplug size_to auto-hotplug
-  if (set_auto_hotplug_option == switches::valuess::kOn || 
-      set_auto_hotplug_option == switches::valuess::kOff) {
+  if (set_auto_hotplug_option == switches::values::kOn || 
+      set_auto_hotplug_option == switches::values::kOff) {
     cpu_configurer.SetAutoHotplugMechanism(false);
   } else {
     LOG(ERROR) << "Invalid values for set auto hotplug option: " << set_auto_hotplug_option;

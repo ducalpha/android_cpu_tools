@@ -16,13 +16,8 @@ class CpuConfigurer {
  public:
   void SetMaxCoreId(size_t max_core_id);
 
-  // Auto hotplug setting
-  // Let the client convert the string input to AutoHotplug::Type
-  // If UNKNOWN is passed, use auto detect
-  void SetAutoHotplug(AutoHotplug::Type type);
+  void SetAutoHotplug(std::string type);
   void SetAutoHotplugEnabled(bool enabled);
-  void SetMpdecisionEnabled(bool enabled);
-  void SetDmHotplugEnabled(bool enabled);
 
   // Enable num_cores, disable the remaining
   void SetNumOnlineCores(size_t num_cores);

@@ -1,20 +1,18 @@
 // Copyright 2016 Duc Hoang Bui, KAIST. All rights reserved.
 // Licensed under MIT ($DUC_LICENSE_URL)
 
+#ifndef ANDROID_TOOLS_WORKLOAD_GENERATOR_WORKLOAD_GENERATOR_H_
+#define ANDROID_TOOLS_WORKLOAD_GENERATOR_WORKLOAD_GENERATOR_H_
 
-#ifndef BROWSER_PROFILER_WORKLOAD_GENERATOR_H_
-#define BROWSER_PROFILER_WORKLOAD_GENERATOR_H_
-
-#include "base/logging.h"
-#include "base/threading/platform_thread.h"
-
-#include <pthread.h>
 #include <pthread.h>
 #include <sys/resource.h> // for setpriority()
 #include <unistd.h>
 #include <vector>
 
-namespace browser_profiler {
+#include "base/logging.h"
+#include "base/threading/platform_thread.h"
+
+namespace android_tools {
 
 namespace {
 void SetCurrentThreadMaxPriority() {
@@ -46,8 +44,8 @@ void RealWorkload(int load_length) {
 
 }  // namespace
 
-
 class WorkloadGenerator {
+
  public:
 
   // Perform a single/multi-threaded 100%-utilization workload on the given cpu cores
@@ -57,7 +55,7 @@ class WorkloadGenerator {
   // NOTE: This function assumes the appropriate cpu cores are on
   // due to cpu cores' hotplugs, this function requires 
   // appropriate cpu setting before running (set frequency + cpu turned on)
-  static void RunWorkload(const std::vector<int>& eligible_cores, int load_length) {
+  static void RunWorkload(const std::vector<size_t>& eligible_cores, int load_length) {
     sync(); // sync all files to prevent interence during workload
 
     // Create workload threads
@@ -91,7 +89,7 @@ class WorkloadGenerator {
     const WorkloadParams *workload_params = (const WorkloadParams *) arg;
 
     base::PlatformThread::SetCurrentThreadAffinity(
-                              std::vector<int>(1, workload_params->eligible_core));
+                              std::vector<size_t>(1, workload_params->eligible_core));
     SetCurrentThreadMaxPriority(); 
 
     VLOG(1) << "Run workload with load_length: " << workload_params->load_length 
@@ -103,9 +101,8 @@ class WorkloadGenerator {
 
     return NULL;
   }
-
 };
 
-}  // namespace browser_profiler
+}  // namespace android_tools
 
-#endif // BROWSER_PROFILER_WORKLOAD_GENERATOR_H_
+#endif // ANDROID_TOOLS_WORKLOAD_GENERATOR_WORKLOAD_GENERATOR_H_

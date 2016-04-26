@@ -14,7 +14,7 @@ namespace android_tools {
 // Configure settings for cpus: frequencies, governor, auto hotplug
 class CpuConfigurer {
  public:
-  void SetMaxCoreId(size_t max_core_id);
+  CpuConfigurer(size_t max_core_id);
 
   void SetAutoHotplugType(const std::string& type);
   void SetAutoHotplugEnabled(bool enabled);

@@ -4,7 +4,6 @@
 #include "cpu_info/cpu_info_switches.h"
 
 namespace android_tools {
-namespace cpu_info {
 namespace switches {
 
 const char kCpuCoreIds[] = "cpu-core-ids";
@@ -15,7 +14,5 @@ const char kClusterFreqs[] = "cluster-freqs";
 
 const char kClusterFreqGovernors[] = "cluster-freq-governors";
 
-
-}  // namespace android_tools
-}  // namespace cpu_info
 }  // namespace switches
+}  // namespace android_tools

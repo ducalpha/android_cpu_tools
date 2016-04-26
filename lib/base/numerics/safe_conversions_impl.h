@@ -5,6 +5,7 @@
 #ifndef BASE_NUMERICS_SAFE_CONVERSIONS_IMPL_H_
 #define BASE_NUMERICS_SAFE_CONVERSIONS_IMPL_H_
 
+#include <cstdint>
 #include <limits.h>
 #include <stdint.h>
 

@@ -1,4 +1,5 @@
 add_definitions (-DNDEBUG)
+
 file (GLOB BASE_SRC 
   "${CMAKE_CURRENT_SOURCE_DIR}/*.cc" 
   "${CMAKE_CURRENT_SOURCE_DIR}/debug/*.cc" 

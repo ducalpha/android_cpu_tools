@@ -2,23 +2,22 @@
 // Licensed under MIT ($DUC_LICENSE_URL)
 
 #include "cpu_info/cpu_info.h"
-#include "cpu_info/cpu_info_switches.h"
 
 #include "base/command_line.h"
+#include "base/logging.h"
 #include "base/files/file_util.h"
 #include "base/strings/string_number_conversions.h"
+#include "base/strings/string_util.h"
+#include "cpu_info/cpu_info_switches.h"
 
 // #include <cstdio>
 
 namespace {
 const std::string kPossibleCpuPath = "/sys/devices/system/cpu/possible";
 
-android_tools::CpuClusterInfo ReadClusterInfoOfCore(size_t core_id) {
-  return CpuClusterInfo{core_id, core_id, 
-      ReadFreqOfCore(FreqType::MIN, core_id), ReadFreqOfCore(FreqType::MAX, core_id),
-      ReadFreqGovernorOfCore(core_id)};
+std::string TrimTrailingNewLine(std::string input) {
+  return base::TrimString(input, "\n", base::TrimPositions::TRIM_TRAILING).as_string();
 }
-
 };
 
 namespace android_tools {
@@ -41,20 +40,27 @@ void CpuInfo::PopulateClusterInfo() {
     cur_cluster = ReadClusterInfoOfCore(i);
 
     if (cur_cluster.max_freq > prev_cluster.max_freq) {
-      cpu_cluster_infos_.emplace_back(prev_cluster_min_core_id, i - 1, 
-          prev_cluster.min_freq, prev_cluster.max_freq, prev_cluster.freq_governor);
+      cpu_cluster_infos_.emplace_back(CpuClusterInfo{prev_cluster_min_core_id, i - 1, 
+          prev_cluster.min_freq, prev_cluster.max_freq, prev_cluster.freq_governor});
       prev_cluster_min_core_id = i;
     }
     prev_cluster = cur_cluster;
   }
 
+
   // Always add the last cluster
-  cpu_cluster_infos_.emplace_back(prev_cluster_min_core_id, max_core_id_,
-      cur_cluster.min_freq, cur_cluster.max_freq, cur_cluster.freq_governor);
+  cpu_cluster_infos_.emplace_back(CpuClusterInfo{prev_cluster_min_core_id, max_core_id_,
+      cur_cluster.min_freq, cur_cluster.max_freq, cur_cluster.freq_governor});
 }
 
-size_t CpuInfo::ReadMaxFreqOfCore(FreqType freq_type, size_t core_id) {
-  std::string freq_path = "/sys/devices/system/cpu/cpu" + std::to_string(core_id) + "/cpufreq/cpuinfo_";
+CpuClusterInfo CpuInfo::ReadClusterInfoOfCore(size_t core_id) {
+  return CpuClusterInfo{core_id, core_id, 
+      ReadFreqOfCore(FreqType::MIN, core_id), ReadFreqOfCore(FreqType::MAX, core_id),
+      ReadFreqGovernorOfCore(core_id)};
+}
+
+size_t CpuInfo::ReadFreqOfCore(FreqType freq_type, size_t core_id) {
+  std::string freq_path = "/sys/devices/system/cpu/cpu" + base::UintToString(core_id) + "/cpufreq/cpuinfo_";
   switch (freq_type) {
     case FreqType::MIN:
       freq_path.append("min");
@@ -62,11 +68,13 @@ size_t CpuInfo::ReadMaxFreqOfCore(FreqType freq_type, size_t core_id) {
     case FreqType::CURRENT:
       freq_path.append("cur");
       break;
-    case FreqType::MIN:
+    case FreqType::MAX:
       freq_path.append("max");
       break;
+    default:
+      NOTREACHED();
   }
-  freq_path.append("max_freq");
+  freq_path.append("_freq");
 
   std::string freq_str;
   if (!base::ReadFileToString(base::FilePath(freq_path), &freq_str)) {
@@ -75,7 +83,7 @@ size_t CpuInfo::ReadMaxFreqOfCore(FreqType freq_type, size_t core_id) {
   }
 
   size_t freq;
-  if (!base::StringToUint(freq_str, &freq)) {
+  if (!base::StringToUint(TrimTrailingNewLine(freq_str), &freq)) {
     LOG(ERROR) << "Cannot convert max_freq (" << freq_str << ") to number";
     return 0;
   }
@@ -83,13 +91,13 @@ size_t CpuInfo::ReadMaxFreqOfCore(FreqType freq_type, size_t core_id) {
 }
 
 std::string CpuInfo::ReadFreqGovernorOfCore(size_t core_id) {
-  std::string governor_path = "/sys/devices/system/cpu/cpu" + std::to_string(core_id) + "/cpufreq/scaling_governor";
+  std::string governor_path = "/sys/devices/system/cpu/cpu" + base::UintToString(core_id) + "/cpufreq/scaling_governor";
   std::string governor;
   if (!base::ReadFileToString(base::FilePath(governor_path), &governor)) {
     LOG(ERROR) << "Failed to read file " << governor_path;
     return "";
   }
-  return governor;
+  return TrimTrailingNewLine(governor);
 }
 
 bool CpuInfo::ReadMinMaxCoreIds() {
@@ -116,19 +124,24 @@ std::string CpuInfo::ToChromeCommandLine() const {
 
   for (size_t i = 0; i < cpu_cluster_infos_.size(); ++i) {
     CpuClusterInfo cluster_info = cpu_cluster_infos_[i];
-    cluster_core_ids.append(cluster_info.min_core_id + "-" + cluster_info.max_core_id);
-    cluster_freqs.append(cluster_info.min_freq + "-" + cluster_info.max_freq);
+    cluster_core_ids.append(base::UintToString(cluster_info.min_core_id) 
+          + "-" + base::UintToString(cluster_info.max_core_id));
+    cluster_freqs.append(base::UintToString(cluster_info.min_freq) 
+          + "-" + base::UintToString(cluster_info.max_freq));
+    cluster_freq_governors.append(cluster_info.freq_governor);
+
     if (i != cpu_cluster_infos_.size() - 1) {
       cluster_core_ids.append(",");
       cluster_freqs.append(",");
+      cluster_freq_governors.append(",");
     }
-    cluster_freq_governors.append(cluster_info.freq_governor);
   }
 
-  cmdline.AppendSwitchASCII(cpu_info::switches::kCpuCoreIds, min_core_id_ + "-" + max_core_id_);
-  cmdline.AppendSwitchASCII(cpu_info::switches::kClusterCoreIds, cluster_core_ids);
-  cmdline.AppendSwitchASCII(cpu_info::switches::kClusterFreqs, cluster_freqs);
-  cmdline.AppendSwitchASCII(cpu_info::switches::kClusterFreqGovernors, cluster_freq_governors);
+  cmdline.AppendSwitchASCII(switches::kCpuCoreIds, base::UintToString(min_core_id_) 
+        + "-" + base::UintToString(max_core_id_));
+  cmdline.AppendSwitchASCII(switches::kClusterCoreIds, cluster_core_ids);
+  cmdline.AppendSwitchASCII(switches::kClusterFreqs, cluster_freqs);
+  cmdline.AppendSwitchASCII(switches::kClusterFreqGovernors, cluster_freq_governors);
 
   return cmdline.GetCommandLineString();
 }

@@ -8,6 +8,6 @@
 
 int main(int argc, char **argv) {
   base::CommandLine cmdline(argc, argv);
-  LOG(INFO) << cmdline.GetSwitchValue("cluster-info");
+  LOG(INFO) << cmdline.GetSwitchValueASCII("cluster-info");
   return 0;
 }

@@ -12,7 +12,6 @@
 #include "base/files/file_util.h"
 #include "base/process/launch.h"
 
-
 namespace {
 
 const std::string kMpdecisionPath = "/system/bin/mpdecision";
@@ -37,8 +36,8 @@ std::unique_ptr<AutoHotplug> AutoHotplug::Create(std::string type) {
     for (const auto& m : creation_map) {
       supported_types.append(m.first + " ");
     }
-    LOG(ERROR) << "Auto hotplug type is not recognized (supported types: " 
-        << supported_types << "\n; auto detect and create";
+    LOG(WARNING) << "Auto hotplug type is not recognized (supported types: " 
+        << supported_types << "); auto detect";
     return AutoDetectCreate();
   }
   return nullptr;
@@ -47,8 +46,10 @@ std::unique_ptr<AutoHotplug> AutoHotplug::Create(std::string type) {
 // static
 std::unique_ptr<AutoHotplug> AutoHotplug::AutoDetectCreate() {
   if (base::PathExists(base::FilePath(kMpdecisionPath))) {
+    VLOG(1) << "Detected mpdecision";
     return creation_map["mpdecision"]();
   } else if (base::PathExists(base::FilePath(kEnabledDmHotplugPath))) {
+    VLOG(1) << "Detected dm hotplug";
     return creation_map["dm-hotplug"]();
   } else {
     LOG(ERROR) << "Cannot detect the auto hotplug mechanism";

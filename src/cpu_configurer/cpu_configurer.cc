@@ -14,9 +14,9 @@
 
 namespace android_tools {
 
-void CpuConfigurer::SetMaxCoreId(size_t max_core_id) {
-  max_core_id_ = max_core_id;
-  num_online_cores_ = max_core_id_ + 1;
+CpuConfigurer::CpuConfigurer(size_t max_core_id)
+: max_core_id_(max_core_id),
+  num_online_cores_(max_core_id + 1) {
 }
 
 void CpuConfigurer::SetAutoHotplugType(const std::string& type) {
@@ -36,6 +36,7 @@ void CpuConfigurer::SetAutoHotplugEnabled(bool enabled) {
 // skip first core (core 0) since there must be one always turned on (cannot turn on/off it)
 // Enable first num_cores: min_core_id_ -> min_core_id_ + num_cores - 1, disable the others
 void CpuConfigurer::SetNumOnlineCores(size_t num_cores) {
+  VLOG(1) << "SetNumOnlineCores " << num_cores;
   num_online_cores_ = num_cores;
   for (size_t i = 1; i <= max_core_id_; ++i) {
     if (i <= num_cores - 1) {
@@ -47,14 +48,15 @@ void CpuConfigurer::SetNumOnlineCores(size_t num_cores) {
 }
 
 void CpuConfigurer::SetCoreEnabled(size_t core_id, bool enabled) {
-    std::string setting_path = "/sys/devices/system/cpu/cpu" +
-                               base::UintToString(core_id) + "/online";
+  std::string setting_path = "/sys/devices/system/cpu/cpu" +
+                             base::UintToString(core_id) + "/online";
 
-    if (!base::WriteFile(base::FilePath(setting_path), enabled ? "1" : "0", 1)) {
-      std::string msg = "Cannot ";
-      msg.append(enabled ? "enable" : "disable").append(" core ").append(base::UintToString(core_id));
-      LOG(ERROR) << msg;
-    }
+  VLOG(3) << "SetCoreEnabled " << enabled << " " << setting_path;
+  if (!base::WriteFile(base::FilePath(setting_path), enabled ? "1" : "0", 1)) {
+    std::string msg = "Cannot ";
+    msg.append(enabled ? "enable" : "disable").append(" core ").append(base::UintToString(core_id));
+    LOG(ERROR) << msg;
+  }
 }
 
 void CpuConfigurer::SetGovernorForOnlineCores(const std::string& governor) {
@@ -64,11 +66,11 @@ void CpuConfigurer::SetGovernorForOnlineCores(const std::string& governor) {
 }
 
 void CpuConfigurer::SetGovernorForCore(const std::string& governor, size_t core_id) {
-    std::string governor_setting_path = "/sys/devices/system/cpu/cpu" + 
-                                         base::UintToString(core_id) + "/cpufreq/scaling_governor"; 
-    if (!base::WriteFile(base::FilePath(governor_setting_path), governor.c_str(), governor.length())) {
-      LOG(ERROR) << "Cannot set governor for core " << core_id;
-    }
+  std::string governor_setting_path = "/sys/devices/system/cpu/cpu" + 
+                                       base::UintToString(core_id) + "/cpufreq/scaling_governor"; 
+  if (!base::WriteFile(base::FilePath(governor_setting_path), governor.c_str(), governor.length())) {
+    LOG(ERROR) << "Cannot set governor for core " << core_id;
+  }
 }
 
 void CpuConfigurer::SetMaxFreqForOnlineCores(const std::string& freq_khz) {

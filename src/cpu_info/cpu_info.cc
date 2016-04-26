@@ -11,7 +11,14 @@
 // #include <cstdio>
 
 namespace {
-const std::string kPossibleCpuPath = "/sys/devices/system/cpu/possible_cpus";
+const std::string kPossibleCpuPath = "/sys/devices/system/cpu/possible";
+
+android_tools::CpuClusterInfo ReadClusterInfoOfCore(size_t core_id) {
+  return CpuClusterInfo{core_id, core_id, 
+      ReadFreqOfCore(FreqType::MIN, core_id), ReadFreqOfCore(FreqType::MAX, core_id),
+      ReadFreqGovernorOfCore(core_id)};
+}
+
 };
 
 namespace android_tools {
@@ -25,21 +32,25 @@ CpuInfo::CpuInfo() {
 }
 
 void CpuInfo::PopulateClusterInfo() {
-  size_t min_core_id = 0;
-  size_t max_max_freq = 0;
-  size_t cur_max_freq = 0;
-  for (size_t i = 0; i <= max_core_id_; ++i) {
-    cur_max_freq = ReadFreqOfCore(FreqType::MAX, i);
-    if (cur_max_freq > max_max_freq) {
-      if (i > 0) {
-        cpu_cluster_infos_.emplace_back(min_core_id, i - 1, ReadFreqOfCore(FreqType::MIN, i - 1), cur_max_freq, ReadGovernorOfCore(i - 1));
-      }
-      min_core_id = i; 
-      max_max_freq = cur_max_freq;
+  CpuClusterInfo cur_cluster = ReadClusterInfoOfCore(min_core_id_),
+      prev_cluster(cur_cluster);
+
+  size_t prev_cluster_min_core_id = 0;
+
+  for (size_t i = 1; i <= max_core_id_; ++i) {
+    cur_cluster = ReadClusterInfoOfCore(i);
+
+    if (cur_cluster.max_freq > prev_cluster.max_freq) {
+      cpu_cluster_infos_.emplace_back(prev_cluster_min_core_id, i - 1, 
+          prev_cluster.min_freq, prev_cluster.max_freq, prev_cluster.freq_governor);
+      prev_cluster_min_core_id = i;
     }
+    prev_cluster = cur_cluster;
   }
-  cpu_cluster_infos_.emplace_back(min_core_id, max_core_id_,
-          ReadFreqOfCore(FreqType::MIN, max_core_id_), cur_max_freq, ReadGovernorOfCore(max_core_id_));
+
+  // Always add the last cluster
+  cpu_cluster_infos_.emplace_back(prev_cluster_min_core_id, max_core_id_,
+      cur_cluster.min_freq, cur_cluster.max_freq, cur_cluster.freq_governor);
 }
 
 size_t CpuInfo::ReadMaxFreqOfCore(FreqType freq_type, size_t core_id) {
@@ -71,7 +82,7 @@ size_t CpuInfo::ReadMaxFreqOfCore(FreqType freq_type, size_t core_id) {
   return freq;
 }
 
-std::string CpuInfo::ReadGovernorOfCore(size_t core_id) {
+std::string CpuInfo::ReadFreqGovernorOfCore(size_t core_id) {
   std::string governor_path = "/sys/devices/system/cpu/cpu" + std::to_string(core_id) + "/cpufreq/scaling_governor";
   std::string governor;
   if (!base::ReadFileToString(base::FilePath(governor_path), &governor)) {

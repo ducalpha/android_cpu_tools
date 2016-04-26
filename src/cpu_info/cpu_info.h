@@ -41,7 +41,7 @@ class CpuInfo {
   // Return min/cur/max freq
   // Return 0 in case of failure
   size_t ReadFreqOfCore(FreqType freq_type, size_t core_id);
-  std::string ReadGovernorOfCore(size_t core_id);
+  std::string ReadFreqGovernorOfCore(size_t core_id);
 
   size_t min_core_id_, max_core_id_;
 

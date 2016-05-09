@@ -3,10 +3,10 @@
 
 #include "cpu_info/cpu_info.h"
 
-#include "base/command_line.h"
 #include "base/logging.h"
 #include "base/files/file_util.h"
 #include "base/strings/string_number_conversions.h"
+#include "base/strings/string_split.h"
 #include "base/strings/string_util.h"
 #include "cpu_info/cpu_info_switches.h"
 
@@ -144,6 +144,80 @@ std::string CpuInfo::ToChromeCommandLine() const {
   cmdline.AppendSwitchASCII(switches::kClusterFreqGovernors, cluster_freq_governors);
 
   return cmdline.GetCommandLineString();
+}
+
+bool CpuInfo::InitializeFromCommandLine(const base::CommandLine& command_line) {
+  std::string cpu_core_ids_str =
+      command_line.GetSwitchValueASCII(switches::kCpuCoreIds);
+
+  if (cpu_core_ids_str.empty()) {
+    LOG(ERROR) << switches::kCpuCoreIds << " is not available";
+    return false;
+  } else {
+    if (sscanf(cpu_core_ids_str.c_str(), "%u-%u", &min_core_id_, &max_core_id_) != 2) {
+      LOG(ERROR) << "Error parsing core ids : " << cpu_core_ids_str;
+      return false;
+    }
+  }
+
+  std::string cluster_core_ids_str =
+      command_line.GetSwitchValueASCII(switches::kClusterCoreIds);
+  std::string cluster_freqs_str =
+      command_line.GetSwitchValueASCII(switches::kClusterFreqs);
+  std::string cluster_freq_governors_str =
+      command_line.GetSwitchValueASCII(switches::kClusterFreqGovernors);
+
+  if (cluster_core_ids_str.empty() || cluster_freqs_str.empty() ||
+      cluster_freq_governors_str.empty()) {
+    LOG(ERROR) << "Some cluster information is not available";
+    return false;
+  } else {
+    std::vector<std::string> cluster_core_ids;
+    std::vector<std::string> cluster_freqs;
+    std::vector<std::string> cluster_freq_governors;
+
+#if defined(ANDROID_TOOLS_STANDALONE)
+    base::SplitString(cluster_core_ids_str, ",", base::WhitespaceHandling::TRIM_WHITESPACE,
+        base::SplitResult::SPLIT_WANT_NONEMPTY);
+    base::SplitString(cluster_freqs_str, ",", base::WhitespaceHandling::TRIM_WHITESPACE,
+        base::SplitResult::SPLIT_WANT_NONEMPTY);
+    base::SplitString(cluster_freq_governors_str, ",", base::WhitespaceHandling::TRIM_WHITESPACE,
+        base::SplitResult::SPLIT_WANT_NONEMPTY);
+#else
+    base::SplitString(cluster_core_ids_str, ',', &cluster_core_ids);
+    base::SplitString(cluster_freqs_str, ',', &cluster_freqs);
+    base::SplitString(cluster_freq_governors_str, ',', &cluster_freq_governors);
+#endif
+
+    if (!(cluster_core_ids.size() == cluster_freqs.size() && 
+          cluster_freq_governors.size() == cluster_core_ids.size() &&
+          !cluster_core_ids.empty())) {
+      LOG(ERROR) << "Cluster information mismatches";
+      return false;
+    }
+
+    cpu_cluster_infos_.resize(cluster_core_ids.size());
+
+    for (size_t i = 0; i < cluster_core_ids.size(); ++i) {
+      if (sscanf(cluster_core_ids[i].c_str(), "%u-%u",
+            &cpu_cluster_infos_[i].min_core_id,
+            &cpu_cluster_infos_[i].max_core_id) != 2) {
+        LOG(ERROR) << "Error parsing cluster core id : " << cluster_core_ids[i];
+        return false;
+      }
+      
+      if (sscanf(cluster_freqs[i].c_str(), "%u-%u",
+            &cpu_cluster_infos_[i].min_freq,
+            &cpu_cluster_infos_[i].max_freq) != 2) {
+        LOG(ERROR) << "Error parsing cluster freqs : " << cluster_freqs[i];
+        return false;
+      }
+
+      cpu_cluster_infos_[i].freq_governor = cluster_freq_governors[i];
+    }
+  }
+
+  return true;
 }
 
 }  // namespace android_tools

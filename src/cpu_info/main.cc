@@ -9,12 +9,12 @@
 
 // Populate cpu information, then write it to a file in command line form
 int main(int argc, char **argv) {
-  android_tools::Init(argc, argv);
+  android_cpu_tools::Init(argc, argv);
 
-  android_tools::CpuInfo cpu_info;
+  android_cpu_tools::CpuInfo cpu_info;
   size_t num_possible_cores = cpu_info.MaxCoreId() - cpu_info.MinCoreId() + 1;
 
-  android_tools::CpuConfigurer cpu_configurer(cpu_info.MaxCoreId());
+  android_cpu_tools::CpuConfigurer cpu_configurer(cpu_info.MaxCoreId());
 
   // TODO: save the auto hotplug state
   cpu_configurer.SetAutoHotplugEnabled(false);

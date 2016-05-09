@@ -13,7 +13,7 @@
 #include "base/threading/platform_thread.h"
 
 // Use header-only code to avoid declaring include in the client
-namespace android_tools {
+namespace android_cpu_tools {
 
 namespace {
 void SetCurrentThreadMaxPriority() {
@@ -105,6 +105,6 @@ class WorkloadGenerator {
   }
 };
 
-}  // namespace android_tools
+}  // namespace android_cpu_tools
 
 #endif // ANDROID_TOOLS_WORKLOAD_GENERATOR_WORKLOAD_GENERATOR_H_

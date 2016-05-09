@@ -9,7 +9,7 @@
 
 #include "cpu_configurer/auto_hotplug.h"
 
-namespace android_tools {
+namespace android_cpu_tools {
 
 // Configure settings for cpus: frequencies, governor, auto hotplug
 class CpuConfigurer {
@@ -42,6 +42,6 @@ class CpuConfigurer {
   std::unique_ptr<AutoHotplug> auto_hotplug_;
 };
 
-}  // namespace android_tools
+}  // namespace android_cpu_tools
 
 #endif  // ANDROID_TOOLS_CPU_CONFIGURER_CPU_CONFIGURER_H_

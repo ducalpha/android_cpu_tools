@@ -1,5 +1,5 @@
-# android_tools
-Tools for Android
+# android_cpu_tools
+CPU tools for Android
 
 
 # How to make

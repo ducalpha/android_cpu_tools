@@ -10,7 +10,7 @@
 
 // This file contains common routines for android_tools
 
-namespace android_tools {
+namespace android_cpu_tools {
 
 void Init(int argc, char **argv) {
   base::CommandLine::Init(argc, argv);
@@ -19,6 +19,6 @@ void Init(int argc, char **argv) {
 }
 
 
-}  // namespace android_tools
+}  // namespace android_cpu_tools
 
 #endif  // ANDROID_TOOLS_COMMON_COMMON_H_

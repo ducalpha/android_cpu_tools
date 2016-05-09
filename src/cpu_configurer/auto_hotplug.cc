@@ -17,14 +17,14 @@ namespace {
 const std::string kMpdecisionPath = "/system/bin/mpdecision";
 const std::string kEnabledDmHotplugPath = "/sys/power/enable_dm_hotplug";
 
-std::map<std::string, std::function<std::unique_ptr<android_tools::AutoHotplug>()>> creation_map{
-  { "mpdecision", []() { return std::unique_ptr<android_tools::AutoHotplug>(new android_tools::Mpdecision()); } },
-  { "dm-hotplug", []() { return std::unique_ptr<android_tools::AutoHotplug>(new android_tools::DmHotplug()); } },
+std::map<std::string, std::function<std::unique_ptr<android_cpu_tools::AutoHotplug>()>> creation_map{
+  { "mpdecision", []() { return std::unique_ptr<android_cpu_tools::AutoHotplug>(new android_cpu_tools::Mpdecision()); } },
+  { "dm-hotplug", []() { return std::unique_ptr<android_cpu_tools::AutoHotplug>(new android_cpu_tools::DmHotplug()); } },
 };
 
 }  // namespace
 
-namespace android_tools {
+namespace android_cpu_tools {
 
 // static
 std::unique_ptr<AutoHotplug> AutoHotplug::Create(std::string type) {
@@ -88,4 +88,4 @@ void DmHotplug::SetEnabled(bool enabled) {
   base::WriteFile(base::FilePath("/sys/power/enable_dm_hotplug"), enabled ? "1" : "0", 1);
 }
 
-}  // namespace android_tools
+}  // namespace android_cpu_tools

@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.2)
 
-project (ANDROID_TOOLS CXX)
+project (ANDROID_CPU_TOOLS CXX)
 
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake" "${CMAKE_SOURCE_DIR}/cmake/android-cmake")
 # set (CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/cmake/android-cmake/android.toolchain.cmake")
@@ -14,7 +14,7 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O2 -s")
 add_definitions (-D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS -DNDEBUG)
 
 # Resolve compatibility between versions of base library in Chromium and Android Tools
-add_definitions (-DANDROID_TOOLS_STANDALONE)
+add_definitions (-DANDROID_CPU_TOOLS_STANDALONE)
 
 include_directories (${CMAKE_SOURCE_DIR}/lib/chromium ${CMAKE_SOURCE_DIR}/src)
 

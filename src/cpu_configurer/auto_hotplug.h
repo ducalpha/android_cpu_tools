@@ -9,7 +9,7 @@
 #include <memory>
 #include <vector>
 
-namespace android_tools {
+namespace android_cpu_tools {
 class AutoHotplug {
  public:
   virtual void SetEnabled(bool enabled) = 0;
@@ -33,6 +33,6 @@ class DmHotplug : public AutoHotplug {
   virtual void SetEnabled(bool enabled) override;
 };
 
-}  // namespace android_tools
+}  // namespace android_cpu_tools
 
 #endif  // ANDROID_TOOLS_CPU_CONFIGURER_AUTO_HOTPLUG_H_

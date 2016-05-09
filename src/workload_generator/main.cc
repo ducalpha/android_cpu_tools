@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     exit(EXIT_FAILURE);
   }
 
-  android_tools::WorkloadGenerator::RunWorkload(
+  android_cpu_tools::WorkloadGenerator::RunWorkload(
                         std::vector<size_t>(1, cpu_affinity), workload_length);
 
   return 0;

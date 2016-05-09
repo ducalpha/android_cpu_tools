@@ -12,7 +12,7 @@
 
 #include <string>
 
-namespace android_tools {
+namespace android_cpu_tools {
 
 CpuConfigurer::CpuConfigurer(size_t max_core_id)
 : max_core_id_(max_core_id),
@@ -101,4 +101,4 @@ void CpuConfigurer::SetMinFreqForCore(const std::string& freq_khz, size_t core_i
   }
 }
 
-}  // namespace android_tools
+}  // namespace android_cpu_tools

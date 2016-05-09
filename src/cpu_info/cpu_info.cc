@@ -20,7 +20,7 @@ std::string TrimTrailingNewLine(std::string input) {
 }
 };
 
-namespace android_tools {
+namespace android_cpu_tools {
 
 // Assume: cpu clusters are sorted increasingly by max frequencies
 CpuInfo::CpuInfo() {
@@ -176,7 +176,7 @@ bool CpuInfo::InitializeFromCommandLine(const base::CommandLine& command_line) {
     std::vector<std::string> cluster_freqs;
     std::vector<std::string> cluster_freq_governors;
 
-#if defined(ANDROID_TOOLS_STANDALONE)
+#if defined(ANDROID_CPU_TOOLS_STANDALONE)
     base::SplitString(cluster_core_ids_str, ",", base::WhitespaceHandling::TRIM_WHITESPACE,
         base::SplitResult::SPLIT_WANT_NONEMPTY);
     base::SplitString(cluster_freqs_str, ",", base::WhitespaceHandling::TRIM_WHITESPACE,
@@ -220,4 +220,4 @@ bool CpuInfo::InitializeFromCommandLine(const base::CommandLine& command_line) {
   return true;
 }
 
-}  // namespace android_tools
+}  // namespace android_cpu_tools

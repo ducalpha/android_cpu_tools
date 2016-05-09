@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace android_tools {
+namespace android_cpu_tools {
 
 struct CpuClusterInfo {
   size_t min_core_id, max_core_id, min_freq, max_freq;
@@ -60,6 +60,6 @@ class CpuInfo {
   std::vector<CpuClusterInfo> cpu_cluster_infos_;
 };
 
-}  // namespace android_tools
+}  // namespace android_cpu_tools
 
 #endif  // ANDROID_TOOLS_CPU_INFO_CPU_INFO_H_

@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  android_tools::Init(argc, argv);
+  android_cpu_tools::Init(argc, argv);
 
   const base::CommandLine& cmdline = *base::CommandLine::ForCurrentProcess();
 
@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
       LOG(WARNING) << "No max core id, use default max_core_id: " << max_core_id;
   }
 
-  android_tools::CpuConfigurer cpu_configurer(max_core_id);
+  android_cpu_tools::CpuConfigurer cpu_configurer(max_core_id);
 
   // Disable hotplug daemon/mechanism
   // TODO: auto detect cpu management daemon and auto hotplug mechanism

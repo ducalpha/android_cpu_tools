@@ -30,6 +30,8 @@ class CpuInfo {
 
   size_t MinCoreId() const { return min_core_id_; }
 
+  std::string AutoHotplug() const { return auto_hotplug_; }
+
   // Return cpu info in form of Chrome command line
   std::string ToChromeCommandLine() const;
 
@@ -55,6 +57,8 @@ class CpuInfo {
   std::string ReadFreqGovernorOfCore(size_t core_id);
 
   size_t min_core_id_, max_core_id_;
+
+  std::string auto_hotplug_;
 
   // This is sorted by max freq
   std::vector<CpuClusterInfo> cpu_cluster_infos_;

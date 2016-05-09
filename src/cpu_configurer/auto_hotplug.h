@@ -12,7 +12,14 @@
 namespace android_cpu_tools {
 class AutoHotplug {
  public:
+  AutoHotplug(const std::string& name);
+
   virtual void SetEnabled(bool enabled) = 0;
+
+  // return a name for cpu-configurer
+  std::string Name() const {
+    return name_;
+  }
 
   // Create a new auto hotplug
   // If type is recognized, call Auto detect
@@ -21,15 +28,19 @@ class AutoHotplug {
   // Detect the auto hotplug mechanism
   static std::unique_ptr<AutoHotplug> AutoDetectCreate();
 
+ private:
+  std::string name_;
 };
 
 class Mpdecision : public AutoHotplug {
  public:
+  Mpdecision(const std::string& name);
   virtual void SetEnabled(bool enabled) override;
 };
 
 class DmHotplug : public AutoHotplug {
  public:
+  DmHotplug(const std::string& name);
   virtual void SetEnabled(bool enabled) override;
 };
 

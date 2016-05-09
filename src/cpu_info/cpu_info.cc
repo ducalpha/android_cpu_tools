@@ -3,11 +3,14 @@
 
 #include "cpu_info/cpu_info.h"
 
+#include <memory>
+
 #include "base/logging.h"
 #include "base/files/file_util.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_split.h"
 #include "base/strings/string_util.h"
+#include "cpu_configurer/auto_hotplug.h"
 #include "cpu_info/cpu_info_switches.h"
 
 // #include <cstdio>
@@ -51,6 +54,8 @@ void CpuInfo::PopulateClusterInfo() {
   // Always add the last cluster
   cpu_cluster_infos_.emplace_back(CpuClusterInfo{prev_cluster_min_core_id, max_core_id_,
       cur_cluster.min_freq, cur_cluster.max_freq, cur_cluster.freq_governor});
+
+  auto_hotplug_ = AutoHotplug::AutoDetectCreate()->Name();
 }
 
 CpuClusterInfo CpuInfo::ReadClusterInfoOfCore(size_t core_id) {
@@ -117,7 +122,7 @@ bool CpuInfo::ReadMinMaxCoreIds() {
 // Assume each cluster has the same min/max freq and freq governor
 // --cpu-core-ids=0,3 --cluster-core-ids=0-3,4-7 --cluster-freqs=1000-2000,2000-4000 --cluster-freq-governor=interactive,interactive
 std::string CpuInfo::ToChromeCommandLine() const {
-  base::CommandLine cmdline(base::CommandLine::NO_PROGRAM);
+  base::CommandLine cmdline(base::FilePath("chrome"));
   std::string cluster_core_ids;
   std::string cluster_freqs;
   std::string cluster_freq_governors;
@@ -143,6 +148,8 @@ std::string CpuInfo::ToChromeCommandLine() const {
   cmdline.AppendSwitchASCII(switches::kClusterFreqs, cluster_freqs);
   cmdline.AppendSwitchASCII(switches::kClusterFreqGovernors, cluster_freq_governors);
 
+  cmdline.AppendSwitchASCII(switches::kAutoHotplug, auto_hotplug_);
+
   return cmdline.GetCommandLineString();
 }
 
@@ -153,11 +160,11 @@ bool CpuInfo::InitializeFromCommandLine(const base::CommandLine& command_line) {
   if (cpu_core_ids_str.empty()) {
     LOG(ERROR) << switches::kCpuCoreIds << " is not available";
     return false;
-  } else {
-    if (sscanf(cpu_core_ids_str.c_str(), "%u-%u", &min_core_id_, &max_core_id_) != 2) {
-      LOG(ERROR) << "Error parsing core ids : " << cpu_core_ids_str;
-      return false;
-    }
+  }
+
+  if (sscanf(cpu_core_ids_str.c_str(), "%u-%u", &min_core_id_, &max_core_id_) != 2) {
+    LOG(ERROR) << "Error parsing core ids : " << cpu_core_ids_str;
+    return false;
   }
 
   std::string cluster_core_ids_str =
@@ -171,51 +178,63 @@ bool CpuInfo::InitializeFromCommandLine(const base::CommandLine& command_line) {
       cluster_freq_governors_str.empty()) {
     LOG(ERROR) << "Some cluster information is not available";
     return false;
-  } else {
-    std::vector<std::string> cluster_core_ids;
-    std::vector<std::string> cluster_freqs;
-    std::vector<std::string> cluster_freq_governors;
+  }
+
+  std::vector<std::string> cluster_core_ids;
+  std::vector<std::string> cluster_freqs;
+  std::vector<std::string> cluster_freq_governors;
 
 #if defined(ANDROID_CPU_TOOLS_STANDALONE)
-    base::SplitString(cluster_core_ids_str, ",", base::WhitespaceHandling::TRIM_WHITESPACE,
-        base::SplitResult::SPLIT_WANT_NONEMPTY);
-    base::SplitString(cluster_freqs_str, ",", base::WhitespaceHandling::TRIM_WHITESPACE,
-        base::SplitResult::SPLIT_WANT_NONEMPTY);
-    base::SplitString(cluster_freq_governors_str, ",", base::WhitespaceHandling::TRIM_WHITESPACE,
-        base::SplitResult::SPLIT_WANT_NONEMPTY);
+  cluster_core_ids = base::SplitString(cluster_core_ids_str, ",", base::WhitespaceHandling::TRIM_WHITESPACE,
+      base::SplitResult::SPLIT_WANT_NONEMPTY);
+  cluster_freqs = base::SplitString(cluster_freqs_str, ",", base::WhitespaceHandling::TRIM_WHITESPACE,
+      base::SplitResult::SPLIT_WANT_NONEMPTY);
+  cluster_freq_governors = base::SplitString(cluster_freq_governors_str, ",", base::WhitespaceHandling::TRIM_WHITESPACE,
+      base::SplitResult::SPLIT_WANT_NONEMPTY);
 #else
-    base::SplitString(cluster_core_ids_str, ',', &cluster_core_ids);
-    base::SplitString(cluster_freqs_str, ',', &cluster_freqs);
-    base::SplitString(cluster_freq_governors_str, ',', &cluster_freq_governors);
+  base::SplitString(cluster_core_ids_str, ',', &cluster_core_ids);
+  base::SplitString(cluster_freqs_str, ',', &cluster_freqs);
+  base::SplitString(cluster_freq_governors_str, ',', &cluster_freq_governors);
 #endif
 
-    if (!(cluster_core_ids.size() == cluster_freqs.size() && 
-          cluster_freq_governors.size() == cluster_core_ids.size() &&
-          !cluster_core_ids.empty())) {
-      LOG(ERROR) << "Cluster information mismatches";
+  if (!(cluster_core_ids.size() == cluster_freqs.size() && 
+        cluster_freq_governors.size() == cluster_core_ids.size() &&
+        !cluster_core_ids.empty())) {
+    LOG(INFO) << cluster_core_ids.size();
+    LOG(INFO) << cluster_freqs.size();
+    LOG(INFO) << cluster_freq_governors.size();
+    LOG(ERROR) << "Cluster information mismatches";
+    return false;
+  }
+
+  cpu_cluster_infos_.resize(cluster_core_ids.size());
+
+  for (size_t i = 0; i < cluster_core_ids.size(); ++i) {
+    if (sscanf(cluster_core_ids[i].c_str(), "%u-%u",
+          &cpu_cluster_infos_[i].min_core_id,
+          &cpu_cluster_infos_[i].max_core_id) != 2) {
+      LOG(ERROR) << "Error parsing cluster core id : " << cluster_core_ids[i];
+      return false;
+    }
+    
+    if (sscanf(cluster_freqs[i].c_str(), "%u-%u",
+          &cpu_cluster_infos_[i].min_freq,
+          &cpu_cluster_infos_[i].max_freq) != 2) {
+      LOG(ERROR) << "Error parsing cluster freqs : " << cluster_freqs[i];
       return false;
     }
 
-    cpu_cluster_infos_.resize(cluster_core_ids.size());
-
-    for (size_t i = 0; i < cluster_core_ids.size(); ++i) {
-      if (sscanf(cluster_core_ids[i].c_str(), "%u-%u",
-            &cpu_cluster_infos_[i].min_core_id,
-            &cpu_cluster_infos_[i].max_core_id) != 2) {
-        LOG(ERROR) << "Error parsing cluster core id : " << cluster_core_ids[i];
-        return false;
-      }
-      
-      if (sscanf(cluster_freqs[i].c_str(), "%u-%u",
-            &cpu_cluster_infos_[i].min_freq,
-            &cpu_cluster_infos_[i].max_freq) != 2) {
-        LOG(ERROR) << "Error parsing cluster freqs : " << cluster_freqs[i];
-        return false;
-      }
-
-      cpu_cluster_infos_[i].freq_governor = cluster_freq_governors[i];
-    }
+    cpu_cluster_infos_[i].freq_governor = cluster_freq_governors[i];
   }
+  
+
+  std::string auto_hotplug = command_line.GetSwitchValueASCII(switches::kAutoHotplug);
+  if (auto_hotplug.empty()) {
+    LOG(ERROR) << "Auto hotplug information is unavailable";
+    return false;
+  }
+
+  auto_hotplug_ = auto_hotplug;
 
   return true;
 }

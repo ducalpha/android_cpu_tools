@@ -14,5 +14,7 @@ const char kClusterFreqs[] = "cluster-freqs";
 
 const char kClusterFreqGovernors[] = "cluster-freq-governors";
 
+extern const char kAutoHotplug[] = "auto-hotplug";
+
 }  // namespace switches
 }  // namespace android_cpu_tools

@@ -17,5 +17,4 @@ CMAKE_CMD="cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=../cmake/android-cmake/android.t
 echo $CMAKE_CMD
 eval $CMAKE_CMD
 
-# make -j4 # VERBOSE=1
 ninja

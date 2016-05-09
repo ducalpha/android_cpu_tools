@@ -3,7 +3,7 @@
 
 #include "cpu_info/cpu_info_switches.h"
 
-namespace android_cpu_tools {
+// Use namespace switches which matches with Chrome to detect conflicts
 namespace switches {
 
 const char kCpuCoreIds[] = "cpu-core-ids";
@@ -14,7 +14,7 @@ const char kClusterFreqs[] = "cluster-freqs";
 
 const char kClusterFreqGovernors[] = "cluster-freq-governors";
 
-extern const char kAutoHotplug[] = "auto-hotplug";
+// Name of auto-hotplug (mpdecision or dm-hotplug)
+const char kAutoHotplug[] = "auto-hotplug";
 
 }  // namespace switches
-}  // namespace android_cpu_tools

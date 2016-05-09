@@ -1,8 +1,8 @@
 // Copyright 2016 Duc Hoang Bui, KAIST. All rights reserved.
 // Licensed under MIT ($DUC_LICENSE_URL)
 
-#ifndef ANDROID_TOOLS_CPU_CONFIGURER_AUTO_HOTPLUG_H_
-#define ANDROID_TOOLS_CPU_CONFIGURER_AUTO_HOTPLUG_H_
+#ifndef ANDROID_CPU_TOOLS_CPU_CONFIGURER_AUTO_HOTPLUG_H_
+#define ANDROID_CPU_TOOLS_CPU_CONFIGURER_AUTO_HOTPLUG_H_
 
 #include <functional>
 #include <map>
@@ -46,4 +46,4 @@ class DmHotplug : public AutoHotplug {
 
 }  // namespace android_cpu_tools
 
-#endif  // ANDROID_TOOLS_CPU_CONFIGURER_AUTO_HOTPLUG_H_
+#endif  // ANDROID_CPU_TOOLS_CPU_CONFIGURER_AUTO_HOTPLUG_H_

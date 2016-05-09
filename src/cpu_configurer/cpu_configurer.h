@@ -1,8 +1,8 @@
 // Copyright 2016 Duc Hoang Bui, KAIST. All rights reserved.
 // Licensed under MIT ($DUC_LICENSE_URL)
 
-#ifndef ANDROID_TOOLS_CPU_CONFIGURER_CPU_CONFIGURER_H_
-#define ANDROID_TOOLS_CPU_CONFIGURER_CPU_CONFIGURER_H_
+#ifndef ANDROID_CPU_TOOLS_CPU_CONFIGURER_CPU_CONFIGURER_H_
+#define ANDROID_CPU_TOOLS_CPU_CONFIGURER_CPU_CONFIGURER_H_
 
 #include <memory>
 #include <string>
@@ -44,4 +44,4 @@ class CpuConfigurer {
 
 }  // namespace android_cpu_tools
 
-#endif  // ANDROID_TOOLS_CPU_CONFIGURER_CPU_CONFIGURER_H_
+#endif  // ANDROID_CPU_TOOLS_CPU_CONFIGURER_CPU_CONFIGURER_H_

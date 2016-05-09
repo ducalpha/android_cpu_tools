@@ -6,6 +6,7 @@
 #include <string>
 
 #include "cpu_configurer/cpu_configurer.h"
+#include "cpu_configurer/cpu_configurer_switches.h"
 #include "common/common.h"
 
 #include "base/command_line.h"
@@ -13,34 +14,6 @@
 #include "base/strings/string_number_conversions.h"
 
 
-namespace switches {
-  // Set auto hotplug if the user knows, if not need to auto detect
-  const char kAutoHotplug[] = "auto-hotplug";
-
-  // Turn on or off the auto hotplug mechanism ("on" or "off")
-  const char kSetAutoHotplug[] = "set-auto-hotplug";
-
-  // Set number of online cores
-  // Cores [0..num-cores-enabled - 1] will be set online
-  const char kSetNumOnlineCores[] = "set-num-online-cores";
-
-  // Set frequency governor
-  const char kSetGovernor[] = "set-governor";
-
-  // Set maximum frequency (in KHz) for the online cores
-  const char kMaxFreq[] = "max-freq";
-
-  // Set maximum frequency (in KHz) for the online cores
-  const char kMinFreq[] = "min-freq";
-
-  // Max core id = num cores - 1 - min_core_id
-  // Assume min_core_id = 0
-  const char kMaxCoreId[] = "max-core-id";
-
-  // Turn on/off values
-  const char kOn[] = "on";
-  const char kOff[] = "off";
-}
 
 // Maximum number of cores on CPUs
 const int kMaxNumCores = 8;
@@ -88,9 +61,7 @@ int main(int argc, char **argv) {
 
   // Disable hotplug daemon/mechanism
   // TODO: auto detect cpu management daemon and auto hotplug mechanism
-  std::string auto_hotplug_option = cmdline.GetSwitchValueASCII(switches::kAutoHotplug);
-
-  cpu_configurer.SetAutoHotplugType(auto_hotplug_option);
+  cpu_configurer.SetAutoHotplugType(cmdline.GetSwitchValueASCII(switches::kAutoHotplugType));
 
   std::string set_auto_hotplug_option = cmdline.GetSwitchValueASCII(switches::kSetAutoHotplug);
   // Always disable auto hotplug first

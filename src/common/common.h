@@ -2,8 +2,8 @@
 // Licensed under MIT ($DUC_LICENSE_URL)
 
 
-#ifndef ANDROID_TOOLS_COMMON_COMMON_H_
-#define ANDROID_TOOLS_COMMON_COMMON_H_
+#ifndef ANDROID_CPU_TOOLS_COMMON_COMMON_H_
+#define ANDROID_CPU_TOOLS_COMMON_COMMON_H_
 
 #include "base/command_line.h"
 #include "base/logging.h"
@@ -21,4 +21,4 @@ void Init(int argc, char **argv) {
 
 }  // namespace android_cpu_tools
 
-#endif  // ANDROID_TOOLS_COMMON_COMMON_H_
+#endif  // ANDROID_CPU_TOOLS_COMMON_COMMON_H_

@@ -37,11 +37,9 @@ namespace switches {
   // Assume min_core_id = 0
   const char kMaxCoreId[] = "max-core-id";
 
-  namespace values {
-    // Turn on/off values
-    const char kOn[] = "on";
-    const char kOff[] = "off";
-  }
+  // Turn on/off values
+  const char kOn[] = "on";
+  const char kOff[] = "off";
 }
 
 // Maximum number of cores on CPUs
@@ -49,8 +47,8 @@ const int kMaxNumCores = 8;
 
 void PrintUsage(const char* program) {
   printf("Please provide options. Example on SM-G900H\n");
-  printf("Example 1: %s --max-core-id=7 --auto-hotplug=dm-hotplug --set-auto-hotplug=off --set-num-online-cores=8 --set-governor=performance --max-freq=1900000\n", program);
-  printf("Example 2: %s --max-core-id=7 --auto-hotplug=dm-hotplug --set-auto-hotplug=on --set-num-online-cores=8 --set-governor=interactive --max-freq=1900000 --min-freq=500000", program);
+  printf("Example, max performance: %s --max-core-id=7 --auto-hotplug=dm-hotplug --set-auto-hotplug=off --set-num-online-cores=8 --set-governor=performance --max-freq=1900000\n", program);
+  printf("Example, default config: %s --max-core-id=7 --auto-hotplug=dm-hotplug --set-auto-hotplug=on --set-num-online-cores=8 --set-governor=interactive --max-freq=1900000 --min-freq=500000", program);
 }
 
 // This class provides a convenient way to set CPU's frequencies and number of on cores
@@ -98,8 +96,8 @@ int main(int argc, char **argv) {
   // Always disable auto hotplug first
   // TODO: unify mpdecision and dm-hotplug size_to auto-hotplug
   if (!set_auto_hotplug_option.empty()) {
-    if (set_auto_hotplug_option == switches::values::kOn || 
-        set_auto_hotplug_option == switches::values::kOff) {
+    if (set_auto_hotplug_option == switches::kOn || 
+        set_auto_hotplug_option == switches::kOff) {
       cpu_configurer.SetAutoHotplugEnabled(false);
     } else {
       LOG(ERROR) << "Invalid values for set auto hotplug option: " << set_auto_hotplug_option;
@@ -129,7 +127,7 @@ int main(int argc, char **argv) {
   }
 
   // Enabled auto-hotplug if needed
-  if (set_auto_hotplug_option == switches::values::kOn) {
+  if (set_auto_hotplug_option == switches::kOn) {
     cpu_configurer.SetAutoHotplugEnabled(true);
   }
 

@@ -12,6 +12,7 @@
 #include "base/logging.h"
 #include "base/threading/platform_thread.h"
 
+// Use header-only code to avoid declaring include in the client
 namespace android_tools {
 
 namespace {
@@ -55,6 +56,7 @@ class WorkloadGenerator {
   // NOTE: This function assumes the appropriate cpu cores are on
   // due to cpu cores' hotplugs, this function requires 
   // appropriate cpu setting before running (set frequency + cpu turned on)
+  // See workload's description to know the appropriate load_length
   static void RunWorkload(const std::vector<size_t>& eligible_cores, int load_length) {
     sync(); // sync all files to prevent interence during workload
 

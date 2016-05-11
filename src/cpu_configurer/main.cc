@@ -20,8 +20,8 @@ const int kMaxNumCores = 8;
 
 void PrintUsage(const char* program) {
   printf("Please provide options. Example on SM-G900H\n");
-  printf("Example, max performance: %s --max-core-id=7 --auto-hotplug=dm-hotplug --set-auto-hotplug=off --set-num-online-cores=8 --set-governor=performance --max-freq=1900000\n", program);
-  printf("Example, default config: %s --max-core-id=7 --auto-hotplug=dm-hotplug --set-auto-hotplug=on --set-num-online-cores=8 --set-governor=interactive --max-freq=1900000 --min-freq=500000", program);
+  printf("Example, max performance: %s --max-core-id=7 --auto-hotplug-type=dm-hotplug --set-auto-hotplug=off --set-num-online-cores=8 --set-governor=performance --max-freq=1900000\n", program);
+  printf("Example, default config: %s --max-core-id=7 --auto-hotplug-type=dm-hotplug --set-auto-hotplug=on --set-num-online-cores=8 --set-governor=interactive --max-freq=1900000 --min-freq=500000", program);
 }
 
 // This class provides a convenient way to set CPU's frequencies and number of on cores

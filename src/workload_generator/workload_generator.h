@@ -15,36 +15,6 @@
 // Use header-only code to avoid declaring include in the client
 namespace android_cpu_tools {
 
-namespace {
-void SetCurrentThreadMaxPriority() {
-#if defined(OS_ANDROID)
-  const int kMaxPriority = -20; // max priority on Linux
-
-  if (setpriority(PRIO_PROCESS, 0, kMaxPriority) < 0) {
-    PLOG(ERROR) << "setpriority failed";
-  }
-}
-#endif
-
-// Some workload that the compiler cannot optimize away
-void RealWorkload(int load_length) {
-  // This workload has complexity of O(load_length^2)
-  // A big core of Exynos 5422, load_length 10000, runs in 0.9 sec
-  int i = 1;
-  bool k = false;
-  for (int j = 0; j < load_length; ++j) {
-    for (i = 1; i < j; ++i) {
-      if ((j % i) == 0)
-        k = true;
-    }
-  }
-
-  // This effectively prevents gcc optimization
-  printf("%d\n", k);
-}
-
-}  // namespace
-
 class WorkloadGenerator {
 
  public:
@@ -102,6 +72,35 @@ class WorkloadGenerator {
     delete workload_params;
 
     return NULL;
+  }
+
+  // C++ 98 does not allow to declare functions in nanonymous namespace in header
+  // So put the following as private static functions
+  static void SetCurrentThreadMaxPriority() {
+#if defined(OS_ANDROID)
+    const int kMaxPriority = -20; // max priority on Linux
+
+    if (setpriority(PRIO_PROCESS, 0, kMaxPriority) < 0) {
+      PLOG(ERROR) << "setpriority failed";
+    }
+  }
+#endif
+
+  // Some workload that the compiler cannot optimize away
+  static void RealWorkload(int load_length) {
+    // This workload has complexity of O(load_length^2)
+    // A big core of Exynos 5422, load_length 10000, runs in 0.9 sec
+    int i = 1;
+    bool k = false;
+    for (int j = 0; j < load_length; ++j) {
+      for (i = 1; i < j; ++i) {
+        if ((j % i) == 0)
+          k = true;
+      }
+    }
+
+    // This effectively prevents gcc optimization
+    printf("%d\n", k);
   }
 };
 

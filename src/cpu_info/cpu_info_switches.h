@@ -4,7 +4,6 @@
 #ifndef ANDROID_CPU_TOOLS_CPU_INFO_CPU_INFO_SWITCHES_H_
 #define ANDROID_CPU_TOOLS_CPU_INFO_CPU_INFO_SWITCHES_H_
 
-namespace android_cpu_tools {
 namespace switches {
 
 extern const char kCpuCoreIds[];
@@ -18,6 +17,5 @@ extern const char kClusterFreqGovernors[];
 extern const char kAutoHotplug[];
 
 }  // namespace switches
-}  // namespace android_cpu_tools
 
 #endif // ANDROID_CPU_TOOLS_CPU_INFO_CPU_INFO_SWITCHES_H_

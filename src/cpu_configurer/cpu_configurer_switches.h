@@ -23,7 +23,6 @@ extern const char kMaxCoreId[];
 extern const char kOn[];
 
 extern const char kOff[];
-}
 
 }  // namespace switches
 

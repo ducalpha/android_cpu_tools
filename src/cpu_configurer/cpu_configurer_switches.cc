@@ -1,7 +1,7 @@
 // Copyright 2016 Duc Hoang Bui, KAIST. All rights reserved.
 // Licensed under MIT ($DUC_LICENSE_URL)
 
-#include "cpu_info/cpu_info_switches.h"
+#include "cpu_configurer/cpu_configurer_switches.h"
 
 namespace switches {
 
@@ -33,6 +33,5 @@ const char kMaxCoreId[] = "max-core-id";
 const char kOn[] = "on";
 
 const char kOff[] = "off";
-}
 
 }  // namespace switches

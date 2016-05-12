@@ -4,8 +4,6 @@
 #ifndef ANDROID_CPU_TOOLS_CPU_INFO_CPU_INFO_H_
 #define ANDROID_CPU_TOOLS_CPU_INFO_CPU_INFO_H_
 
-#include "base/command_line.h"
-
 #include <string>
 #include <vector>
 
@@ -22,9 +20,6 @@ class CpuInfo {
 
   // Initialize cpu info by reading information from /sys
   void PopulateClusterInfo();
-
-  // Initialize cpu info provided a command line instance
-  bool InitializeFromCommandLine(const base::CommandLine& command_line);
 
   size_t MaxCoreId() const { return max_core_id_; }
 

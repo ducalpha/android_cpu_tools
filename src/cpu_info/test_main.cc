@@ -20,8 +20,8 @@ int main(int argc, char **argv) {
   cmdline.AppendArguments(base::CommandLine(another_argv), false);
 
   android_cpu_tools::CpuInfo cpu_info;
-  cpu_info.InitializeFromCommandLine(cmdline);
+  //cpu_info.InitializeFromCommandLine(cmdline);
 
-  LOG(INFO) << cpu_info.AutoHotplug();
+  //LOG(INFO) << cpu_info.AutoHotplug();
   return 0;
 }

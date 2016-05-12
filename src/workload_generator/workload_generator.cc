@@ -14,8 +14,8 @@ void SetCurrentThreadMaxPriority() {
   if (setpriority(PRIO_PROCESS, 0, kMaxPriority) < 0) {
     PLOG(ERROR) << "setpriority failed";
   }
-}
 #endif
+}
 
 // Some workload that the compiler cannot optimize away
 void RealWorkload(int load_length) {

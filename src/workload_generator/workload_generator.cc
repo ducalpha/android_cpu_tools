@@ -3,6 +3,8 @@
 
 #include "workload_generator/workload_generator.h"
 
+#include "workload_generator/platform_thread.h"
+
 namespace {
 
 void SetCurrentThreadMaxPriority() {
@@ -40,7 +42,7 @@ struct WorkloadParams {
 void *Workload(void *arg) {
   const WorkloadParams *workload_params = (const WorkloadParams *) arg;
 
-  base::PlatformThread::SetCurrentThreadAffinity(
+  android_cpu_tools::PlatformThread::SetCurrentThreadAffinity(
                             std::vector<size_t>(1, workload_params->eligible_core));
   SetCurrentThreadMaxPriority(); 
 

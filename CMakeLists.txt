@@ -16,7 +16,7 @@ add_definitions (-D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS -DNDEBUG)
 # Resolve compatibility between versions of base library in Chromium and Android Tools
 add_definitions (-DANDROID_CPU_TOOLS_STANDALONE)
 
-include_directories (${CMAKE_SOURCE_DIR}/lib/chromium ${CMAKE_SOURCE_DIR}/src)
+include_directories (${CMAKE_SOURCE_DIR}/lib/libbase-chromium ${CMAKE_SOURCE_DIR}/src)
 
 add_subdirectory (lib)
 add_subdirectory (src)

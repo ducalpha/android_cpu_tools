@@ -1,1 +1,1 @@
-add_subdirectory (chromium)
+add_subdirectory (libbase-chromium)

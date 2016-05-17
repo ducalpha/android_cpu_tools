@@ -19,5 +19,6 @@ add_definitions (-DANDROID_CPU_TOOLS_STANDALONE)
 include_directories (${CMAKE_SOURCE_DIR}/lib/libbase-chromium ${CMAKE_SOURCE_DIR}/src)
 
 add_subdirectory (lib)
+
 add_subdirectory (src)
 add_subdirectory (test)

@@ -15,10 +15,10 @@
       'sources': [
         'src/cpu_configurer/cpu_configurer_switches.cc',
         'src/cpu_configurer/cpu_configurer_switches.h',
+        'src/cpu_info/command_line_cpu_info.cc',
+        'src/cpu_info/cpu_info.h',
         'src/cpu_info/cpu_info_switches.cc',
         'src/cpu_info/cpu_info_switches.h',
-        'src/cpu_info/command_line_cpu_info.cc',
-        'src/cpu_info/command_line_cpu_info.h',
       ],
     },
     {

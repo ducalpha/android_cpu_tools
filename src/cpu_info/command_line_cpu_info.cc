@@ -1,7 +1,7 @@
 // Copyright 2016 Duc Hoang Bui, KAIST. All rights reserved.
 // Licensed under MIT ($DUC_LICENSE_URL)
 
-#include "command_line_cpu_info.h"
+#include "cpu_info/cpu_info.h"
 
 #include "base/command_line.h"
 #include "base/logging.h"
@@ -151,20 +151,20 @@ LazyCpuInfo& GlobalCpuInfo() {
 
 }  // namespace
 
-namespace base {
+namespace android_cpu_tools {
 
 // static
-size_t CpuInfo::MinCoreId() {
+size_t CommandLineCpuInfo::MinCoreId() {
   return GlobalCpuInfo().min_core_id;
 }
 
 // static
-size_t CpuInfo::MaxCoreId() {
+size_t CommandLineCpuInfo::MaxCoreId() {
   return GlobalCpuInfo().max_core_id;
 }
 
 // static
-size_t CpuInfo::MinFreq() {
+size_t CommandLineCpuInfo::MinFreq() {
   static size_t min_freq = 0;
   if (min_freq > 0)
     return min_freq;
@@ -181,7 +181,7 @@ size_t CpuInfo::MinFreq() {
 }
 
 // static
-size_t CpuInfo::MaxFreq() {
+size_t CommandLineCpuInfo::MaxFreq() {
   static size_t max_freq = 0;
   if (max_freq > 0)
     return max_freq;
@@ -198,7 +198,7 @@ size_t CpuInfo::MaxFreq() {
 }
 
 // static
-std::string CpuInfo::FirstFreqGovernor() {
+std::string CommandLineCpuInfo::FirstFreqGovernor() {
   const std::vector<android_cpu_tools::CpuClusterInfo>& cpu_cluster_infos =
     CpuClusterInfos();
   if (cpu_cluster_infos.empty()) {
@@ -210,13 +210,13 @@ std::string CpuInfo::FirstFreqGovernor() {
 }
 
 // static
-std::string CpuInfo::AutoHotplug() {
+std::string CommandLineCpuInfo::AutoHotplug() {
   return GlobalCpuInfo().auto_hotplug;
 }
 
 // static
-const std::vector<android_cpu_tools::CpuClusterInfo>& CpuInfo::CpuClusterInfos() {
+const std::vector<android_cpu_tools::CpuClusterInfo>& CommandLineCpuInfo::CpuClusterInfos() {
   return GlobalCpuInfo().cpu_cluster_infos;
 }
 
-}  // namespace base
+}  // namespace android_cpu_tools

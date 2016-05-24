@@ -59,6 +59,27 @@ class CpuInfo {
   std::vector<CpuClusterInfo> cpu_cluster_infos_;
 };
 
+
+// TODO: merge this class to android_cpu_tools::CpuInfo
+// Provide a singleton for other class to query cpu info
+class CommandLineCpuInfo {
+ public:
+  CommandLineCpuInfo();
+
+  static size_t MinCoreId();
+  static size_t MaxCoreId();
+
+  static size_t MinFreq();
+  static size_t MaxFreq();
+
+  static std::string AutoHotplug();
+  static const std::vector<android_cpu_tools::CpuClusterInfo>& CpuClusterInfos();
+
+  // Frequency governor of the first cpu
+  // Typically, governors of all cores are the same
+  static std::string FirstFreqGovernor();
+};
+
 }  // namespace android_cpu_tools
 
 #endif  // ANDROID_CPU_TOOLS_CPU_INFO_CPU_INFO_H_

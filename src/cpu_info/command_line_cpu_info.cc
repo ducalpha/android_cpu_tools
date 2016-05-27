@@ -12,7 +12,7 @@
 #include <cstdio>
 
 // Only Chromium supports LazyInstance
-#if defined(BUILD_CHROMIUM)
+#if defined(CHROMIUM_BUILD)
 #include "base/lazy_instance.h"
 #endif
 
@@ -129,14 +129,14 @@ bool LazyCpuInfo::InitializeFromCommandLine() {
 }
 
 
-#if defined(BUILD_CHROMIUM)
+#if defined(CHROMIUM_BUILD)
 base::LazyInstance<LazyCpuInfo> g_lazy_cpu_info = LAZY_INSTANCE_INITIALIZER;
 #else
 LazyCpuInfo *g_lazy_cpu_info;
 #endif
 
 LazyCpuInfo& GlobalCpuInfo() {
-#if defined(BUILD_CHROMIUM)
+#if defined(CHROMIUM_BUILD)
   return g_lazy_cpu_info.Get();
 #else
   if (!g_lazy_cpu_info) {

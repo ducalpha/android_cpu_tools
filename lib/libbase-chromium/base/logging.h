@@ -371,7 +371,7 @@ const LogSeverity LOG_0 = LOG_ERROR;
 #define LOG_STREAM(severity) COMPACT_GOOGLE_LOG_ ## severity.stream()
 
 // ducalpha: add compatibility with WebKit
-#if !defined(BUILD_CHROMIUM)
+#if !defined(CHROMIUM_BUILD)
 #ifdef LOG
 #undef LOG
 #endif

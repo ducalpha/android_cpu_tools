@@ -1,4 +1,4 @@
-# android_cpu_tools
+# Android CPU Tools
 CPU tools for Android
 
 # Dependency

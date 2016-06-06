@@ -1,5 +1,5 @@
 // Copyright 2016 Duc Hoang Bui, KAIST. All rights reserved.
-// Licensed under MIT ($DUC_LICENSE_URL)
+// Licensed under MIT (https://github.com/ducalpha/android_cpu_tools/blob/master/LICENSE)
 
 #ifndef ANDROID_CPU_TOOLS_WORKLOAD_GENERATOR_WORKLOAD_GENERATOR_H_
 #define ANDROID_CPU_TOOLS_WORKLOAD_GENERATOR_WORKLOAD_GENERATOR_H_

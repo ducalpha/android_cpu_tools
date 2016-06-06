@@ -1,5 +1,5 @@
 // Copyright 2016 Duc Hoang Bui, KAIST. All rights reserved.
-// Licensed under MIT ($LICENSE_URL)
+// Licensed under MIT (https://github.com/ducalpha/energy_efficient_web_page_loading/blob/master/LICENSE)
 
 #include "base/logging.h"
 #include "base/threading/platform_thread.h"

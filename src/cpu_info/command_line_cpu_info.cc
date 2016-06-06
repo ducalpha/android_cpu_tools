@@ -38,7 +38,7 @@ LazyCpuInfo::LazyCpuInfo()
     max_core_id(7),
     auto_hotplug("dm-hotplug") {
   if (!InitializeFromCommandLine()) {
-      LOG(ERROR) << "Error initializing cpu_info from command line";
+      CHROMIUM_LOG(ERROR) << "Error initializing cpu_info from command line";
   }
 }
 
@@ -49,12 +49,12 @@ bool LazyCpuInfo::InitializeFromCommandLine() {
       command_line.GetSwitchValueASCII(switches::kCpuCoreIds);
 
   if (cpu_core_ids_str.empty()) {
-    LOG(ERROR) << switches::kCpuCoreIds << " is not available";
+    CHROMIUM_LOG(ERROR) << switches::kCpuCoreIds << " is not available";
     return false;
   }
 
   if (sscanf(cpu_core_ids_str.c_str(), "%zu-%zu", &min_core_id, &max_core_id) != 2) {
-    LOG(ERROR) << "Error parsing core ids : " << cpu_core_ids_str;
+    CHROMIUM_LOG(ERROR) << "Error parsing core ids : " << cpu_core_ids_str;
     return false;
   }
 
@@ -67,7 +67,7 @@ bool LazyCpuInfo::InitializeFromCommandLine() {
 
   if (cluster_core_ids_str.empty() || cluster_freqs_str.empty() ||
       cluster_freq_governors_str.empty()) {
-    LOG(ERROR) << "Some cluster information is not available";
+    CHROMIUM_LOG(ERROR) << "Some cluster information is not available";
     return false;
   }
 
@@ -85,10 +85,10 @@ bool LazyCpuInfo::InitializeFromCommandLine() {
   if (!(cluster_core_ids.size() == cluster_freqs.size() && 
         cluster_freq_governors.size() == cluster_core_ids.size() &&
         !cluster_core_ids.empty())) {
-    LOG(INFO) << cluster_core_ids.size();
-    LOG(INFO) << cluster_freqs.size();
-    LOG(INFO) << cluster_freq_governors.size();
-    LOG(ERROR) << "Cluster information mismatches";
+    CHROMIUM_LOG(INFO) << cluster_core_ids.size();
+    CHROMIUM_LOG(INFO) << cluster_freqs.size();
+    CHROMIUM_LOG(INFO) << cluster_freq_governors.size();
+    CHROMIUM_LOG(ERROR) << "Cluster information mismatches";
     return false;
   }
 
@@ -98,14 +98,14 @@ bool LazyCpuInfo::InitializeFromCommandLine() {
     if (sscanf(cluster_core_ids[i].c_str(), "%zu-%zu",
           &cpu_cluster_infos[i].min_core_id,
           &cpu_cluster_infos[i].max_core_id) != 2) {
-      LOG(ERROR) << "Error parsing cluster core id : " << cluster_core_ids[i];
+      CHROMIUM_LOG(ERROR) << "Error parsing cluster core id : " << cluster_core_ids[i];
       return false;
     }
     
     if (sscanf(cluster_freqs[i].c_str(), "%zu-%zu",
           &cpu_cluster_infos[i].min_freq,
           &cpu_cluster_infos[i].max_freq) != 2) {
-      LOG(ERROR) << "Error parsing cluster freqs : " << cluster_freqs[i];
+      CHROMIUM_LOG(ERROR) << "Error parsing cluster freqs : " << cluster_freqs[i];
       return false;
     }
 
@@ -115,7 +115,7 @@ bool LazyCpuInfo::InitializeFromCommandLine() {
 
   auto_hotplug = command_line.GetSwitchValueASCII(switches::kAutoHotplug);
   if (auto_hotplug.empty()) {
-    LOG(ERROR) << "Auto hotplug information is unavailable";
+    CHROMIUM_LOG(ERROR) << "Auto hotplug information is unavailable";
     return false;
   }
 
@@ -136,7 +136,7 @@ LazyCpuInfo& GlobalCpuInfo() {
   if (!g_lazy_cpu_info) {
     g_lazy_cpu_info = new LazyCpuInfo();
     if (!g_lazy_cpu_info) {
-      LOG(FATAL) << "Cannot allocat cpu info";
+      CHROMIUM_LOG(FATAL) << "Cannot allocat cpu info";
     }
   }
   return *g_lazy_cpu_info;
@@ -196,7 +196,7 @@ std::string CommandLineCpuInfo::FirstFreqGovernor() {
   const std::vector<android_cpu_tools::CpuClusterInfo>& cpu_cluster_infos =
     CpuClusterInfos();
   if (cpu_cluster_infos.empty()) {
-    LOG(ERROR) << "Cpu cluster info is empty";
+    CHROMIUM_LOG(ERROR) << "Cpu cluster info is empty";
     return "";
   }
 

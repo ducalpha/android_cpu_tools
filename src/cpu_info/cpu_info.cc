@@ -29,7 +29,7 @@ namespace android_cpu_tools {
 // Assume: cpu clusters are sorted increasingly by max frequencies
 CpuInfo::CpuInfo() {
   if (!ReadMinMaxCoreIds()) {
-    LOG(ERROR) << "Cannot read min and max core ids";
+    CHROMIUM_LOG(ERROR) << "Cannot read min and max core ids";
     return;
   }
 }
@@ -84,13 +84,13 @@ size_t CpuInfo::ReadFreqOfCore(FreqType freq_type, size_t core_id) {
 
   std::string freq_str;
   if (!base::ReadFileToString(base::FilePath(freq_path), &freq_str)) {
-    LOG(ERROR) << "Failed to read file " << freq_path;
+    CHROMIUM_LOG(ERROR) << "Failed to read file " << freq_path;
     return 0;
   }
 
   size_t freq;
   if (!base::StringToUint(TrimTrailingNewLine(freq_str), &freq)) {
-    LOG(ERROR) << "Cannot convert max_freq (" << freq_str << ") to number";
+    CHROMIUM_LOG(ERROR) << "Cannot convert max_freq (" << freq_str << ") to number";
     return 0;
   }
   return freq;
@@ -100,7 +100,7 @@ std::string CpuInfo::ReadFreqGovernorOfCore(size_t core_id) {
   std::string governor_path = "/sys/devices/system/cpu/cpu" + base::UintToString(core_id) + "/cpufreq/scaling_governor";
   std::string governor;
   if (!base::ReadFileToString(base::FilePath(governor_path), &governor)) {
-    LOG(ERROR) << "Failed to read file " << governor_path;
+    CHROMIUM_LOG(ERROR) << "Failed to read file " << governor_path;
     return "";
   }
   return TrimTrailingNewLine(governor);
@@ -112,7 +112,7 @@ bool CpuInfo::ReadMinMaxCoreIds() {
   int min_core_id, max_core_id;
   int num_read = sscanf(min_max_core_ids.c_str(), "%d-%d", &min_core_id, &max_core_id);
   if (num_read != 2) {
-    LOG(ERROR) << "Cannot parse min and max core ids from string: " << min_max_core_ids;
+    CHROMIUM_LOG(ERROR) << "Cannot parse min and max core ids from string: " << min_max_core_ids;
     return false;
   }
   min_core_id_ = min_core_id;

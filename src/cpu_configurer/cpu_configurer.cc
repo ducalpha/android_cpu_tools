@@ -22,7 +22,7 @@ CpuConfigurer::CpuConfigurer(size_t max_core_id)
 void CpuConfigurer::SetAutoHotplugType(const std::string& type) {
   auto_hotplug_ = AutoHotplug::Create(type);
   if (auto_hotplug_ == nullptr)
-    LOG(ERROR) << "Cannot create auto hotplug";
+    CHROMIUM_LOG(ERROR) << "Cannot create auto hotplug";
 }
 
 void CpuConfigurer::SetAutoHotplugEnabled(bool enabled) {
@@ -55,7 +55,7 @@ void CpuConfigurer::SetCoreEnabled(size_t core_id, bool enabled) {
   if (!base::WriteFile(base::FilePath(setting_path), enabled ? "1" : "0", 1)) {
     std::string msg = "Cannot ";
     msg.append(enabled ? "enable" : "disable").append(" core ").append(base::UintToString(core_id));
-    LOG(ERROR) << msg;
+    CHROMIUM_LOG(ERROR) << msg;
   }
 }
 
@@ -69,7 +69,7 @@ void CpuConfigurer::SetGovernorForCore(const std::string& governor, size_t core_
   std::string governor_setting_path = "/sys/devices/system/cpu/cpu" + 
                                        base::UintToString(core_id) + "/cpufreq/scaling_governor"; 
   if (!base::WriteFile(base::FilePath(governor_setting_path), governor.c_str(), governor.length())) {
-    LOG(ERROR) << "Cannot set governor for core " << core_id;
+    CHROMIUM_LOG(ERROR) << "Cannot set governor for core " << core_id;
   }
 }
 
@@ -89,7 +89,7 @@ void CpuConfigurer::SetMaxFreqForCore(const std::string& freq_khz, size_t core_i
   std::string coreOnline =
       "/sys/devices/system/cpu/cpu" + base::UintToString(core_id) + "/cpufreq/scaling_max_freq"; 
   if (!base::WriteFile(base::FilePath(coreOnline), freq_khz.c_str(), freq_khz.length())) {
-    LOG(ERROR) << "Cannot set max frequency for core " << core_id;
+    CHROMIUM_LOG(ERROR) << "Cannot set max frequency for core " << core_id;
   }
 }
 
@@ -97,7 +97,7 @@ void CpuConfigurer::SetMinFreqForCore(const std::string& freq_khz, size_t core_i
   std::string coreOnline =
       "/sys/devices/system/cpu/cpu" + base::UintToString(core_id) + "/cpufreq/scaling_min_freq"; 
   if (!base::WriteFile(base::FilePath(coreOnline), freq_khz.c_str(), freq_khz.length())) {
-    LOG(ERROR) << "Cannot set min frequency for core " << core_id;
+    CHROMIUM_LOG(ERROR) << "Cannot set min frequency for core " << core_id;
   }
 }
 

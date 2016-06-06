@@ -39,7 +39,7 @@ std::unique_ptr<AutoHotplug> AutoHotplug::Create(std::string type) {
     for (const auto& m : creation_map) {
       supported_types.append(m.first + " ");
     }
-    LOG(WARNING) << "Auto hotplug type is not recognized (supported types: " 
+    CHROMIUM_LOG(WARNING) << "Auto hotplug type is not recognized (supported types: " 
         << supported_types << "); auto detect";
     return AutoDetectCreate();
   }
@@ -55,7 +55,7 @@ std::unique_ptr<AutoHotplug> AutoHotplug::AutoDetectCreate() {
     VLOG(1) << "Detected dm hotplug";
     return creation_map[kDmHotplug](kDmHotplug);
   } else {
-    LOG(ERROR) << "Cannot detect the auto hotplug mechanism";
+    CHROMIUM_LOG(ERROR) << "Cannot detect the auto hotplug mechanism";
   }
 
   return nullptr;
@@ -80,17 +80,17 @@ void Mpdecision::SetEnabled(bool enabled) {
   base::CommandLine cmd(cmd_argv);
   base::Process process = base::LaunchProcess(cmd, base::LaunchOptions());
   if (!process.IsValid()) {
-    LOG(ERROR) << "Cannot run cmd " << cmd.GetCommandLineString();
+    CHROMIUM_LOG(ERROR) << "Cannot run cmd " << cmd.GetCommandLineString();
     return;
   }
 
   int exit_code;
   if (!process.WaitForExit(&exit_code)) {
-    LOG(ERROR) << "Cannot get return code for cmd " << cmd.GetCommandLineString();
+    CHROMIUM_LOG(ERROR) << "Cannot get return code for cmd " << cmd.GetCommandLineString();
     return;
   }
   if (exit_code != 0)
-    LOG(ERROR) << "Running " << cmd.GetCommandLineString() << " failed with code " << exit_code;
+    CHROMIUM_LOG(ERROR) << "Running " << cmd.GetCommandLineString() << " failed with code " << exit_code;
 
   // to save time, skip checking mpdecision processes
 }

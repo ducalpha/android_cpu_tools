@@ -15,13 +15,13 @@ int main(int argc, char **argv) {
   std::vector<std::string> another_argv = base::SplitString(args, " ", base::TRIM_WHITESPACE, base::SPLIT_WANT_NONEMPTY);
 
   for (const auto& arg : another_argv) {
-    LOG(INFO) << arg;
+    CHROMIUM_LOG(INFO) << arg;
   }
   cmdline.AppendArguments(base::CommandLine(another_argv), false);
 
   android_cpu_tools::CpuInfo cpu_info;
   //cpu_info.InitializeFromCommandLine(cmdline);
 
-  //LOG(INFO) << cpu_info.AutoHotplug();
+  //CHROMIUM_LOG(INFO) << cpu_info.AutoHotplug();
   return 0;
 }

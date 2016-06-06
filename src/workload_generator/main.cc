@@ -12,13 +12,13 @@ int main(int argc, char **argv)
 {
 
   if (argc < 3) {
-    LOG(ERROR) << "Usage: " << argv[0] << " <cpu_affinity> <workload_length>\n";
+    CHROMIUM_LOG(ERROR) << "Usage: " << argv[0] << " <cpu_affinity> <workload_length>\n";
     exit(EXIT_FAILURE);
   }
   
   size_t cpu_affinity;
   if (!base::StringToUint(argv[1], &cpu_affinity)) {
-    LOG(ERROR) << "Failed to convert cpu_affinity to uint";
+    CHROMIUM_LOG(ERROR) << "Failed to convert cpu_affinity to uint";
     exit(EXIT_FAILURE);
   }
 
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 
   int workload_length;
   if (!base::StringToInt(argv[2], &workload_length)) {
-    LOG(ERROR) << "Failed to convert cpu_affinity to int";
+    CHROMIUM_LOG(ERROR) << "Failed to convert cpu_affinity to int";
     exit(EXIT_FAILURE);
   }
 

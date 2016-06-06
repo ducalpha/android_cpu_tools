@@ -48,11 +48,11 @@ int main(int argc, char **argv) {
   size_t max_core_id = kMaxNumCores - 1;
   if (cmdline.HasSwitch(switches::kMaxCoreId)) {
     if (!base::StringToUint(cmdline.GetSwitchValueASCII(switches::kMaxCoreId), &max_core_id)) {
-      LOG(ERROR) << "Invalid option for " << switches::kMaxCoreId;
+      CHROMIUM_LOG(ERROR) << "Invalid option for " << switches::kMaxCoreId;
       return 1;
     }
   } else {
-      LOG(WARNING) << "No max core id, use default max_core_id: " << max_core_id;
+      CHROMIUM_LOG(WARNING) << "No max core id, use default max_core_id: " << max_core_id;
   }
 
   android_cpu_tools::CpuConfigurer cpu_configurer(max_core_id);
@@ -69,14 +69,14 @@ int main(int argc, char **argv) {
         set_auto_hotplug_option == switches::kOff) {
       cpu_configurer.SetAutoHotplugEnabled(false);
     } else {
-      LOG(ERROR) << "Invalid values for set auto hotplug option: " << set_auto_hotplug_option;
+      CHROMIUM_LOG(ERROR) << "Invalid values for set auto hotplug option: " << set_auto_hotplug_option;
     }
   }
 
   if (cmdline.HasSwitch(switches::kSetNumOnlineCores)) {
     size_t num_online_cores;
     if (!base::StringToUint(cmdline.GetSwitchValueASCII(switches::kSetNumOnlineCores), &num_online_cores)) {
-      LOG(ERROR) << "Invalid option for " << switches::kSetNumOnlineCores << ": " << cmdline.GetSwitchValueASCII(switches::kSetNumOnlineCores);
+      CHROMIUM_LOG(ERROR) << "Invalid option for " << switches::kSetNumOnlineCores << ": " << cmdline.GetSwitchValueASCII(switches::kSetNumOnlineCores);
       return 1;
     }
     cpu_configurer.SetNumOnlineCores(num_online_cores);

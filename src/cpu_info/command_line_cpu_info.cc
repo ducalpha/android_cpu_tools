@@ -43,7 +43,7 @@ LazyCpuInfo::LazyCpuInfo()
 }
 
 bool LazyCpuInfo::InitializeFromCommandLine() {
-  const base::CommandLine& command_line = *CommandLine::ForCurrentProcess();
+  const base::CommandLine& command_line = *base::CommandLine::ForCurrentProcess();
 
   std::string cpu_core_ids_str =
       command_line.GetSwitchValueASCII(switches::kCpuCoreIds);
@@ -75,18 +75,12 @@ bool LazyCpuInfo::InitializeFromCommandLine() {
   std::vector<std::string> cluster_freqs;
   std::vector<std::string> cluster_freq_governors;
 
-#if defined(ANDROID_CPU_TOOLS_STANDALONE)
   cluster_core_ids = base::SplitString(cluster_core_ids_str, ",", base::WhitespaceHandling::TRIM_WHITESPACE,
       base::SplitResult::SPLIT_WANT_NONEMPTY);
   cluster_freqs = base::SplitString(cluster_freqs_str, ",", base::WhitespaceHandling::TRIM_WHITESPACE,
       base::SplitResult::SPLIT_WANT_NONEMPTY);
   cluster_freq_governors = base::SplitString(cluster_freq_governors_str, ",", base::WhitespaceHandling::TRIM_WHITESPACE,
       base::SplitResult::SPLIT_WANT_NONEMPTY);
-#else
-  base::SplitString(cluster_core_ids_str, ',', &cluster_core_ids);
-  base::SplitString(cluster_freqs_str, ',', &cluster_freqs);
-  base::SplitString(cluster_freq_governors_str, ',', &cluster_freq_governors);
-#endif
 
   if (!(cluster_core_ids.size() == cluster_freqs.size() && 
         cluster_freq_governors.size() == cluster_core_ids.size() &&

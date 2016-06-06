@@ -1,5 +1,5 @@
 // Copyright 2016 Duc Hoang Bui, KAIST. All rights reserved.
-// Licensed under MIT ($DUC_LICENSE_URL)
+// Licensed under MIT (https://github.com/ducalpha/android_cpu_tools/blob/master/LICENSE)
 
 #include <string>
 

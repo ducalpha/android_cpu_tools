@@ -1,5 +1,5 @@
 // Copyright 2016 Duc Hoang Bui, KAIST. All rights reserved.
-// Licensed under MIT ($LICENSE_URL)
+// Licensed under MIT (https://github.com/ducalpha/android_cpu_tools/blob/master/LICENSE)
 
 #ifndef BROWSER_PROFILER_WORKLOAD_GENERATOR_PLATFORM_THREAD_H_
 #define BROWSER_PROFILER_WORKLOAD_GENERATOR_PLATFORM_THREAD_H_

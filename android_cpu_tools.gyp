@@ -1,7 +1,6 @@
 # Copyright 2016 Duc Hoang Bui, KAIST. All rights reserved.
 # Licensed under MIT ($DUC_LICENSE_URL)
 
-# for old version Chromiums
 {
   'targets': [
     {
